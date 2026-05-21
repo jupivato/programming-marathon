@@ -1,0 +1,50 @@
+% Pacotes e configuração geral da apostila
+\usepackage{iftex}
+\ifxetex
+  \usepackage{fontspec}
+  \setmainfont{Latin Modern Roman}
+  \setsansfont{Latin Modern Sans}
+  \setmonofont{Latin Modern Mono}[Scale=0.9]
+\else
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+\fi
+\usepackage[english]{babel}
+\renewcommand{\contentsname}{Sumário}
+\renewcommand{\chaptername}{Capítulo}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\setlength{\headheight}{14pt}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{enumitem}
+\DeclareMathOperator{\mdc}{mdc}
+\DeclareMathOperator{\mmc}{mmc}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!60!black,
+  urlcolor=blue!70!black,
+  citecolor=green!50!black
+}
+
+\usepackage{listings}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE,RO]{\leftmark}
+\fancyhead[LO,RE]{\thepage}
+\fancyfoot[C]{Apostila de Maratona de Programação}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\input{config/listings-cpp}

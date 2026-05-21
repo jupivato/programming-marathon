@@ -1,0 +1,329 @@
+\chapter{Fundamentos Teóricos}
+
+Este capítulo reúne fórmulas e raciocínios que aparecem o tempo todo em maratona.
+Para cada item você verá: \textbf{o que é}, \textbf{para que serve} na prova e um trecho em C++ (pasta \texttt{codigos/formulas\_teoria/}).
+
+%==============================================================================
+\section{Combinatória}
+%==============================================================================
+
+Serve para \textbf{contar} sem enumerar tudo: caminhos em grade, distribuir objetos, escolher comissões, anagramas, etc.
+Quando o enunciado pergunta ``de quantas maneiras'' ou ``quantas sequências'', comece por aqui.
+
+\subsection{Permutações, arranjos e combinações}
+
+\textbf{Permutações} --- ordenar $n$ objetos distintos:
+\begin{equation}
+  P(n) = n!
+\end{equation}
+\emph{Para que serve:} filas, anagramas, permutações de um vetor, força bruta ordenada quando $n$ é pequeno ($n \le 10$).
+
+\incluircpp[firstline=5,lastline=9]{formulas_teoria/combinatoria.cpp}
+
+\textbf{Arranjos} --- escolher \emph{e ordenar} $k$ entre $n$ (troféus em pódio, senhas com posições distintas):
+\begin{equation}
+  A(n,k) = \frac{n!}{(n-k)!}
+\end{equation}
+\emph{Para que serve:} quando a \textbf{ordem importa}, mas nem todos os $n$ entram (ex.: top 3 de um ranking).
+
+\incluircpp[firstline=12,lastline=14]{formulas_teoria/combinatoria.cpp}
+
+\textbf{Combinações} --- escolher $k$ entre $n$ \textbf{sem} ordem (a fórmula mais comum):
+\begin{equation}
+  C(n,k) = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}
+\end{equation}
+\emph{Para que serve:} comitês, subconjuntos, arestas de um grafo completo, coeficientes em contagens.
+Em provas com $n \le 10^6$, calcule com fórmula iterativa ou pré-compute fatoriais --- não use $n!$ direto.
+
+\incluircpp[firstline=17,lastline=24]{formulas_teoria/combinatoria.cpp}
+
+\textbf{Relação de Stifel} (Pascal):
+\begin{equation}
+  \binom{n}{k} = \binom{n-1}{k} + \binom{n-1}{k-1}
+\end{equation}
+\emph{Para que serve:} DP em triângulo de Pascal, construir tabela de $\binom{n}{k}$ para muitos testes, provas combinatórias.
+
+\incluircpp[firstline=27,lastline=31]{formulas_teoria/combinatoria.cpp}
+
+\textbf{Vandermonde:}
+\begin{equation}
+  \binom{m+n}{r} = \sum_{k=0}^{r} \binom{m}{k}\binom{n}{r-k}
+\end{equation}
+\emph{Para que serve:} juntar duas fontes de escolha (ex.: escolher $r$ itens entre dois grupos de tamanhos $m$ e $n$).
+
+\incluircpp[firstline=34,lastline=39]{formulas_teoria/combinatoria.cpp}
+
+\subsection{Números de Catalan}
+
+\begin{equation}
+  C_n = \frac{1}{n+1}\binom{2n}{n}
+\end{equation}
+Valores iniciais: $1, 1, 2, 5, 14, 42, \ldots$
+
+\emph{Para que serve:} parênteses balanceados, triangulações de polígono convexo, caminhos monótonos que \textbf{não passam acima} da diagonal, árvores binárias cheias.
+Se o problema tem ``balanceamento'' ou ``não ultrapassar uma linha'' em grade, suspeite de Catalan.
+
+\incluircpp[firstline=42,lastline=44]{formulas_teoria/combinatoria.cpp}
+
+\subsection{Stars and Bars (bolas e barras)}
+
+Conta soluções inteiras \textbf{não negativas} de $x_1 + \cdots + x_k = n$:
+\begin{equation}
+  \binom{n + k - 1}{k - 1}
+\end{equation}
+\emph{Para que serve:} distribuir $n$ objetos idênticos em $k$ caixas; somas com restrição mínima (troque $x_i' = x_i - 1$).
+Com limites máximos por variável, use DP ou inclusão-exclusão em vez da fórmula fechada.
+
+\incluircpp[firstline=47,lastline=49]{formulas_teoria/combinatoria.cpp}
+
+\subsection{Princípio da inclusão-exclusão (PIE)}
+
+\begin{equation}
+  \left|\bigcup_{i=1}^{n} A_i\right|
+  = \sum |A_i| - \sum |A_i \cap A_j| + \cdots
+\end{equation}
+\emph{Para que serve:} contar números até $N$ divisíveis por algum conjunto de primos; ``pelo menos uma propriedade''; evitar superestimar união de eventos.
+Exemplo clássico: quantos inteiros em $[1,N]$ são múltiplos de $a$ \textbf{ou} de $b$?
+
+\incluircpp[firstline=57,lastline=61]{formulas_teoria/combinatoria.cpp}
+
+\subsection{Princípio da casa dos pombos}
+
+Se $n$ objetos vão em $m$ caixas e $n > m$, alguma caixa tem pelo menos dois objetos.
+Mais geral: alguma caixa tem pelo menos $\lceil n/m \rceil$ itens.
+
+\emph{Para que serve:} provar que \textbf{existe} repetição (cor igual, par com mesma soma mod $k$, dois pontos na mesma célula).
+Não conta quantas configurações existem --- só garante que uma configuração forçada existe.
+
+\incluircpp[firstline=52,lastline=54]{formulas_teoria/combinatoria.cpp}
+
+%==============================================================================
+\section{Teoria dos números}
+%==============================================================================
+
+Aparece em divisibilidade, restos, primos, criptografia básica e qualquer problema com ``mod $10^9+7$''.
+
+\subsection{Divisibilidade, MDC e MMC}
+
+\begin{equation}
+  \mdc(a,b) = \mdc(b,\, a \bmod b), \qquad a \cdot b = \mdc(a,b) \cdot \mmc(a,b)
+\end{equation}
+\emph{Para que serve:} simplificar frações, saber se dois números são coprimos ($\mdc=1$), calcular MMC de vários períodos (encontro de ciclos), Euclides estendido para inversos modulares.
+
+\incluircpp[firstline=5,lastline=13]{formulas_teoria/numeros.cpp}
+
+\subsection{Congruências e aritmética modular}
+
+$a \equiv b \pmod{m}$ significa que $a$ e $b$ deixam o mesmo resto ao dividir por $m$.
+
+\emph{Para que serve:} trabalhar com ``relógio'' que volta a zero (horário, hash mod $m$, dígitos finais).
+Somas e produtos de restos são válidos; \textbf{cuidado} ao cancelar: $ac \equiv bc \pmod{m}$ só implica $a \equiv b$ se $\mdc(c,m)=1$.
+
+\incluircpp[firstline=16,lastline=26]{formulas_teoria/numeros.cpp}
+
+\subsection{Pequeno teorema de Fermat}
+
+Se $p$ é primo e $p \nmid a$: $a^{p-1} \equiv 1 \pmod{p}$.
+Inverso modular (primo $p$): $a^{-1} \equiv a^{p-2} \pmod{p}$.
+
+\emph{Para que serve:} dividir mod primo, combinar com exponenciação rápida, testes de primalidade simples.
+É a base de muitos problemas com ``resposta mod $10^9+7$'' quando o módulo é primo.
+
+\incluircpp[firstline=29,lastline=43]{formulas_teoria/numeros.cpp}
+
+\subsection{Função totiente de Euler}
+
+$\varphi(n)$ = quantos inteiros em $[1,n]$ são coprimos com $n$.
+\begin{equation}
+  \varphi(n) = n \prod_{p \mid n} \left(1 - \frac{1}{p}\right)
+\end{equation}
+\textbf{Euler:} se $\mdc(a,n)=1$, então $a^{\varphi(n)} \equiv 1 \pmod{n}$.
+
+\emph{Para que serve:} expoentes módulo composto, contar números ``invertíveis'' mod $n$, generalizar Fermat quando o módulo não é primo.
+
+\incluircpp[firstline=46,lastline=56]{formulas_teoria/numeros.cpp}
+
+\subsection{Teorema chinês do resto (CRT)}
+
+Vários restos $x \equiv a_i \pmod{m_i}$ com $\mdc(m_i,m_j)=1$ têm solução única mod $m_1\cdots m_k$.
+
+\emph{Para que serve:} recombinar informação mod vários primos; acelerar cálculos grandes; problemas de relógios com vários períodos coprimos.
+
+\incluircpp[firstline=59,lastline=62]{formulas_teoria/numeros.cpp}
+
+\subsection{Crivo e fatoração}
+
+\textbf{Crivo de Eratóstenes:} lista primos até $N$ em tempo quase linear.
+\textbf{Exponenciação rápida:} $a^b \bmod m$ em $O(\log b)$.
+
+\emph{Para que serve:} crivo pré-processa primos até $10^7$ em muitas plataformas; fatoração por tentativa até $\sqrt{n}$ resolve $n \le 10^{12}$ em um teste; \texttt{binpow} é obrigatório em quase todo problema modular com expoente grande.
+
+\incluircpp[firstline=65,lastline=73]{formulas_teoria/numeros.cpp}
+
+%==============================================================================
+\section{Somas, progressões e séries}
+%==============================================================================
+
+Evitam somar em laço quando existe fórmula fechada --- ganho de tempo e precisão (overflow).
+
+\subsection{Progressão aritmética (PA)}
+
+$a_n = a_1 + (n-1)r$, \quad $S_n = \dfrac{(a_1 + a_n)n}{2}$.
+
+\emph{Para que serve:} soma de números consecutivos, custo acumulado com incremento fixo, análise de loops com passo constante, problemas de ``pedras em fila''.
+
+\incluircpp[firstline=5,lastline=13]{formulas_teoria/somas.cpp}
+
+\subsection{Progressão geométrica (PG)}
+
+$S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$ ($q \neq 1$).
+
+\emph{Para que serve:} somar potências $1 + q + q^2 + \cdots$, modelos que dobram a cada passo, séries em análise de divide-and-conquer.
+
+\incluircpp[firstline=22,lastline=25]{formulas_teoria/somas.cpp}
+
+\subsection{Somas clássicas}
+
+\begin{align}
+  \sum_{i=1}^{n} i &= \frac{n(n+1)}{2} &
+  &\text{(trabalho total de um loop simples)} \\
+  \sum_{i=1}^{n} i^2 &= \frac{n(n+1)(2n+1)}{6} &
+  &\text{(quadrados, volumes discretos)} \\
+  \sum_{i=1}^{n} i^3 &= \left(\frac{n(n+1)}{2}\right)^2 &
+  &\text{(ligada à soma dos $i$)} \\
+  \sum_{i=0}^{n} 2^i &= 2^{n+1} - 1 &
+  &\text{(todos os subconjuntos, árvore binária cheia)}
+\end{align}
+\emph{Para que serve:} responder perguntas do tipo ``quantas operações no pior caso'' ou somar séries sem loop $O(n)$ quando $n$ é enorme.
+
+\incluircpp[firstline=28,lastline=46]{formulas_teoria/somas.cpp}
+
+%==============================================================================
+\section{Geometria computacional}
+%==============================================================================
+
+Problemas no plano com pontos, segmentos, polígonos, distâncias e áreas.
+Quase tudo usa \textbf{inteiro} (produto vetorial) para evitar erro de ponto flutuante.
+
+\subsection{Produto escalar e vetorial (2D)}
+
+\begin{align}
+  \vec{u}\cdot\vec{v} &= x_1 x_2 + y_1 y_2 \\
+  \vec{u}\times\vec{v} &= x_1 y_2 - y_1 y_2 \quad \text{(escalar em 2D)}
+\end{align}
+\emph{Para que serve:} \textbf{escalar} $\Rightarrow$ ângulo reto se $=0$, projeção; \textbf{vetorial} $\Rightarrow$ orientação (esquerda/direita), área, ponto dentro de polígono convexo, interseção de segmentos.
+
+\incluircpp[firstline=9,lastline=16]{formulas_teoria/geometria.cpp}
+
+\subsection{Distância e ângulo}
+
+$d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$, \quad $\cos\theta = \dfrac{\vec{u}\cdot\vec{v}}{\|\vec{u}\|\,\|\vec{v}\|}$.
+
+\emph{Para que serve:} vizinho mais próximo, raio de cobertura, comparar ângulos sem \texttt{acos} (compare quadrados ou use produto escalar com sinal).
+
+\incluircpp[firstline=19,lastline=26]{formulas_teoria/geometria.cpp}
+
+\subsection{Área de triângulo e polígono}
+
+Área com cross: $\frac{1}{2}|(B-A)\times(C-A)|$.
+Herão com lados $a,b,c$: $\sqrt{s(s-a)(s-b)(s-c)}$, $s=\frac{a+b+c}{2}$.
+Polígono (shoelace): $\frac{1}{2}|\sum (x_i y_{i+1} - x_{i+1} y_i)|$.
+
+\emph{Para que serve:} área de terreno, polígono convexo, verificar se três pontos estão colineares (área $=0$), integrais discretas no plano.
+
+\incluircpp[firstline=29,lastline=47]{formulas_teoria/geometria.cpp}
+
+\subsection{Retas, semiplanos e interseção}
+
+Distância de ponto à reta $Ax+By+C=0$: $|Ax_0+By_0+C|/\sqrt{A^2+B^2}$.
+
+\emph{Para que serve:} ponto mais perto de uma estrada, lado de uma reta (semiplano), colisão aproximada, convex hull e half-plane intersection.
+
+\incluircpp[firstline=51,lastline=53]{formulas_teoria/geometria.cpp}
+
+%==============================================================================
+\section{Grafos: definições e resultados}
+%==============================================================================
+
+Teoria que explica \textbf{por que} certos algoritmos existem e o que esperar de um grafo.
+
+\textbf{Handshaking:} $\sum \deg(v) = 2|E|$ --- toda aresta conta nos dois extremos.
+
+\emph{Para que serve:} checar se uma lista de graus é realizável; contar arestas a partir dos graus; provas de impossibilidade.
+
+\incluircpp[firstline=5,lastline=15]{formulas_teoria/grafos_probabilidade.cpp}
+
+\textbf{Euler planar:} $|V| - |E| + |F| = 2$.
+
+\emph{Para que serve:} mapas planares, limitar arestas em grafos desenhados no plano; contexto teórico de faces em subdivisões.
+
+\incluircpp[firstline=18,lastline=20]{formulas_teoria/grafos_probabilidade.cpp}
+
+\textbf{Na prática da prova} (implementações completas):
+\begin{itemize}
+  \item \textbf{Caminho mínimo} (pesos $\ge 0$): Dijkstra; negativos: Bellman--Ford; todos os pares: Floyd--Warshall.
+  \item \textbf{AGM:} conectar tudo com peso mínimo (Kruskal/Prim).
+  \item \textbf{Fluxo:} máximo fluxo s--t (Edmonds--Karp, Dinic).
+\end{itemize}
+Templates em \texttt{codigos/algoritmos\_avulsos/grafos/}.
+
+%==============================================================================
+\section{Probabilidade e esperança (noções)}
+%==============================================================================
+
+\begin{equation}
+  \mathbb{E}[X] = \sum_{i=1}^{n} \mathbb{P}(X_i = 1)
+\end{equation}
+quando $X$ é soma de variáveis indicadoras (0/1).
+
+\emph{Para que serve:} contar ``quantos pares esperados'' sem listar tudo; simplificar esperança de processos aleatórios; provar que em média um algoritmo aleatório é bom.
+
+\textbf{Markov:} $\mathbb{P}(X \ge t) \le \mathbb{E}[X]/t$ para $X \ge 0$.
+
+\emph{Para que serve:} limitar probabilidade de evento raro quando só se conhece a média; análise de algoritmos com cotas fracas.
+
+\incluircpp[firstline=24,lastline=31]{formulas_teoria/grafos_probabilidade.cpp}
+
+%==============================================================================
+\section{Complexidade assintótica}
+%==============================================================================
+
+\emph{Para que serve:} escolher algoritmo que \textbf{cabe no tempo} antes de codar.
+Notação $O(f(n))$: crescimento no pior caso (ordem de magnitude).
+
+\begin{center}
+\begin{tabular}{@{}p{2.2cm}p{4.2cm}p{5.5cm}@{}}
+  \toprule
+  Ordem & Exemplo de algoritmo & Quando costuma caber ($n$ principal) \\
+  \midrule
+  $O(1)$ & hash, fórmula & sempre \\
+  $O(\log n)$ & busca binária, heap & $n \le 10^9$ \\
+  $O(n)$ & BFS, DFS, varredura & $n \le 10^7$ \\
+  $O(n \log n)$ & ordenar, Dijkstra com heap & $n \le 10^6$ \\
+  $O(n^2)$ & DP $n\times n$, grafo denso & $n \le 5000$ \\
+  $O(n^3)$ & Floyd--Warshall, Gauss & $n \le 500$--$1000$ \\
+  $O(2^n)$ & bitmask, subconjuntos & $n \le 22$--$24$ \\
+  $O(n!)$ & permutação completa & $n \le 10$--$11$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Regra prática:} $\sim 10^8$ operações simples por segundo. Se $n = 10^6$, $O(n^2)$ estoura; prefira $O(n\log n)$ ou $O(n)$.
+
+%==============================================================================
+\section{Lógica de modelagem}
+%==============================================================================
+
+Ferramentas para transformar enunciado em algoritmo.
+
+\begin{itemize}
+  \item \textbf{Invariante:} algo que não muda (paridade, soma mod $k$, tamanho de conjunto). \emph{Serve para:} provar impossibilidade ou orientar simulação.
+  \item \textbf{Monotonicidade:} resposta só aumenta (ou só diminui) com o parâmetro. \emph{Serve para:} busca binária na \textbf{resposta}, não nos dados.
+  \item \textbf{Subestrutura ótima:} pedaço da solução ótima é ótimo. \emph{Serve para:} programação dinâmica.
+  \item \textbf{Casos extremos:} $n=1$, grafo vazio, todos iguais. \emph{Serve para:} não perder ponto fácil e achar bug de borda.
+  \item \textbf{Bijeção:} contar de dois jeitos o mesmo conjunto. \emph{Serve para:} provas combinatórias e simplificar fórmula final.
+\end{itemize}
+
+\section*{Leitura complementar}
+
+\href{https://cp-algorithms.com/}{CP-Algorithms}, \href{https://usaco.guide/}{USACO Guide} e os capítulos com código desta apostila (\texttt{algoritmos\_avulsos/}).

@@ -1,0 +1,74 @@
+% Estilo de listagem para C++ (competitivo) — rosa, cinza e roxo claro
+\definecolor{codebg}{RGB}{248,244,252}        % fundo roxo bem claro
+\definecolor{codeframe}{RGB}{195,188,210}      % borda cinza-arroxeado
+\definecolor{codetext}{RGB}{62,58,72}         % texto base cinza escuro
+\definecolor{codekeyword}{RGB}{210,88,138}     % palavras-chave rosa
+\definecolor{codestring}{RGB}{72,130,85}       % strings verde
+\definecolor{codecomment}{RGB}{165,140,195}   % comentários roxo claro
+\definecolor{codenum}{RGB}{165,158,180}        % numeração de linhas
+
+\lstdefinelanguage{cppmaratona}{
+  language=C++,
+  morekeywords={ll,ull,ld,vi,vll,pii,pll,iii,lll,vi,vc,pb,mp,fi,se,eb,mt,all},
+  sensitive=true
+}
+
+\lstdefinestyle{maratona-cpp-base}{
+  language=cppmaratona,
+  extendedchars=true,
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small\color{codetext},
+  keywordstyle=\color{codekeyword}\bfseries,
+  stringstyle=\color{codestring},
+  commentstyle=\color{codecomment}\itshape,
+  numberstyle=\tiny\color{codenum},
+  numbers=left,
+  numbersep=8pt,
+  stepnumber=1,
+  tabsize=2,
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=false,
+  frame=single,
+  rulecolor=\color{codeframe},
+  xleftmargin=12pt,
+  xrightmargin=6pt,
+  framexleftmargin=12pt,
+  captionpos=b,
+  aboveskip=1em,
+  belowskip=1em
+}
+
+% Acentos em comentários (precisa de \begin{document} para \c)
+\AtBeginDocument{%
+  \lstdefinestyle{maratona-cpp}{%
+    style=maratona-cpp-base,
+    literate=
+      {á}{{\'a}}1 {â}{{\^a}}1 {ã}{{\~a}}1 {à}{{\`a}}1
+      {é}{{\'e}}1 {ê}{{\^e}}1 {í}{{\'i}}1
+      {ó}{{\'o}}1 {ô}{{\^o}}1 {õ}{{\~o}}1 {ú}{{\'u}}1
+      {ç}{{\c c}}1 {Ç}{{\c C}}1
+  }%
+}
+
+\lstset{style=maratona-cpp-base}
+
+% Diretório raiz dos códigos (relativo à pasta apostila/)
+\newcommand{\codigosdir}{../codigos}
+
+% Inclui um arquivo .cpp: \incluircpp{mineira_2024/copos_de_leite.cpp}
+% Opções extras do listings: \incluircpp[firstline=5,lastline=20]{...}
+\newcommand{\incluircpp}[2][]{%
+  \lstinputlisting[style=maratona-cpp,#1]{\codigosdir/#2}%
+}
+
+% Com legenda e referência cruzada (\ref{lst:...})
+\newcommand{\incluircppcaption}[3][]{%
+  \lstinputlisting[
+    style=maratona-cpp,
+    caption={#3},
+    label={lst:#2},
+    #1
+  ]{\codigosdir/#2}%
+}
