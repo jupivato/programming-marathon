@@ -24,7 +24,7 @@ Cinco amigos vão tirar foto em fila. A pergunta é: de quantas \emph{ordens} di
 
 
 \incluircpp[firstline=5,lastline=9]{formulas_teoria/combinatoria.cpp}
-
+\\
 \textbf{Arranjos} --- escolher \emph{e ordenar} $k$ entre $n$ (troféus em pódio, senhas com posições distintas):
 \begin{equation}
   A(n,k) = \frac{n!}{(n-k)!}
@@ -37,7 +37,7 @@ Em uma corrida com 20 corredores, quantas formas existem de ouro, prata e bronze
 
 
 \incluircpp[firstline=12,lastline=14]{formulas_teoria/combinatoria.cpp}
-
+\\
 \textbf{Combinações} --- escolher $k$ entre $n$ \textbf{sem} ordem (a fórmula mais comum):
 \begin{equation}
   C(n,k) = \binom{n}{k} = \frac{n!}{k!\,(n-k)!}
@@ -51,7 +51,7 @@ Uma turma de 30 alunos vai escolher 4 representantes para uma reunião. Não imp
 
 
 \incluircpp[firstline=17,lastline=24]{formulas_teoria/combinatoria.cpp}
-
+\\
 \textbf{Relação de Stifel} (Pascal):
 \begin{equation}
   \binom{n}{k} = \binom{n-1}{k} + \binom{n-1}{k-1}
@@ -64,7 +64,7 @@ Lembra do triângulo de Pascal da escola? Cada número é a soma dos dois de cim
 
 
 \incluircpp[firstline=27,lastline=31]{formulas_teoria/combinatoria.cpp}
-
+\\
 \textbf{Vandermonde:}
 \begin{equation}
   \binom{m+n}{r} = \sum_{k=0}^{r} \binom{m}{k}\binom{n}{r-k}

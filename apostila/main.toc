@@ -27,16 +27,67 @@
 \contentsline {section}{\numberline {1.7}Complexidade assintótica}{12}{section.1.7}%
 \contentsline {section}{\numberline {1.8}Lógica de modelagem}{12}{section.1.8}%
 \contentsline {chapter}{\numberline {2}C++ útil para maratona}{14}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Template, tipos e macros}{14}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Entrada e saída rápidas}{15}{section.2.2}%
-\contentsline {section}{\numberline {2.3}\texttt {vector} e \texttt {deque}}{15}{section.2.3}%
-\contentsline {section}{\numberline {2.4}\texttt {pair}, \texttt {tuple} e desempacotar}{16}{section.2.4}%
-\contentsline {section}{\numberline {2.5}\texttt {set}, \texttt {multiset}, \texttt {map} e \texttt {unordered\_*}}{17}{section.2.5}%
-\contentsline {section}{\numberline {2.6}\texttt {stack}, \texttt {queue} e \texttt {priority\_queue}}{17}{section.2.6}%
-\contentsline {section}{\numberline {2.7}Algoritmos prontos (\texttt {<algorithm>})}{18}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Ordenar, reverter e tirar duplicatas}{18}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Busca binária na STL}{19}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}\texttt {min}, \texttt {max}, \texttt {gcd}, somas e permutações}{19}{subsection.2.7.3}%
-\contentsline {section}{\numberline {2.8}Ordenar structs, lambdas e \texttt {auto}}{19}{section.2.8}%
-\contentsline {section}{\numberline {2.9}\texttt {string}, \texttt {stringstream} e \texttt {bitset}}{20}{section.2.9}%
-\contentsline {section}{\numberline {2.10}Resumo: o que usar em cada situação}{21}{section.2.10}%
+\contentsline {section}{\numberline {2.1}Antes de começar: template, tipos e o que é a STL}{14}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}O que é a STL}{14}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Arquivo base de maratona}{14}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Tipos: por que \texttt {int} nem sempre basta}{14}{subsection.2.1.3}%
+\contentsline {section}{\numberline {2.2}Entrada e saída (\texttt {cin} / \texttt {cout})}{15}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Leitura e escrita básica}{15}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Deixar o \texttt {cin} rápido}{15}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Precisão em números reais}{15}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Linha inteira}{15}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}\texttt {vector}: o array dinâmico (o mais importante)}{16}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}O que é}{16}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Como criar}{16}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Como acessar elementos}{16}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Tamanho e vazio}{17}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Modificar o vetor}{17}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Três formas de percorrer}{17}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Vetor de vetores (grafo, grade)}{17}{subsection.2.3.7}%
+\contentsline {section}{\numberline {2.4}\texttt {deque}: fila com duas pontas}{18}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}O que é e quando usar}{18}{subsection.2.4.1}%
+\contentsline {section}{\numberline {2.5}Iteradores: como o C++ ``aponta'' para elementos}{19}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}O que é um iterador}{19}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Por que isso importa na maratona}{19}{subsection.2.5.2}%
+\contentsline {section}{\numberline {2.6}Ordenação: \texttt {sort}, ordem de \texttt {pair} e remover duplicatas}{20}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Como funciona o \texttt {sort}}{20}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}Ordenação de \texttt {pair}: regra lexicográfica}{20}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}Ordenar \texttt {vector} de \texttt {tuple}}{20}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}Ordenar com sua própria regra (lambda)}{22}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.5}Remover duplicatas consecutivas}{22}{subsection.2.6.5}%
+\contentsline {section}{\numberline {2.7}\texttt {pair} e \texttt {tuple}: juntar dois ou mais valores}{22}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}\texttt {pair}: dois campos nomeados}{22}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}\texttt {tuple}: três ou mais campos}{22}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Desempacotar: \texttt {tie} e \texttt {auto [a,b] = p}}{22}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}\texttt {pair} como chave de \texttt {map}}{22}{subsection.2.7.4}%
+\contentsline {section}{\numberline {2.8}\texttt {pair} e \texttt {tuple} dentro de outras estruturas}{23}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Tabela: onde \texttt {pair}/\texttt {tuple} funcionam direto}{23}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}\texttt {set} e \texttt {multiset} com \texttt {pair} ou \texttt {tuple}}{23}{subsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.8.3}\texttt {map} com chave \texttt {pair} ou \texttt {tuple}}{24}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}\texttt {priority\_queue} com \texttt {pair} ou \texttt {tuple}}{24}{subsection.2.8.4}%
+\contentsline {subsection}{\numberline {2.8.5}Grafo ponderado: \texttt {vector<vector<pair<int,int>>>}}{24}{subsection.2.8.5}%
+\contentsline {subsection}{\numberline {2.8.6}Aninhar estruturas: \texttt {map} de \texttt {set<pair>}}{24}{subsection.2.8.6}%
+\contentsline {section}{\numberline {2.9}\texttt {set}, \texttt {multiset}, \texttt {map} e \texttt {unordered\_*}}{26}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Diferença mental: vetor vs conjunto vs mapa}{26}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}\texttt {set}: conjunto ordenado sem repetir}{26}{subsection.2.9.2}%
+\contentsline {subsection}{\numberline {2.9.3}\texttt {map}: dicionário chave $\to $ valor}{26}{subsection.2.9.3}%
+\contentsline {subsection}{\numberline {2.9.4}\texttt {multiset}: \texttt {set} com repetição}{26}{subsection.2.9.4}%
+\contentsline {subsection}{\numberline {2.9.5}\texttt {unordered\_map} / \texttt {unordered\_set}}{27}{subsection.2.9.5}%
+\contentsline {section}{\numberline {2.10}\texttt {stack}, \texttt {queue} e \texttt {priority\_queue}}{28}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Comparação visual}{28}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}\texttt {stack} --- LIFO (último a entrar, primeiro a sair)}{28}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}\texttt {queue} --- FIFO (primeiro a entrar, primeiro a sair)}{28}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.4}\texttt {priority\_queue} --- fila de prioridade (heap)}{28}{subsection.2.10.4}%
+\contentsline {section}{\numberline {2.11}Busca binária e outras funções de \texttt {<algorithm>}}{29}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Pré-requisito}{29}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}O que cada uma faz}{29}{subsection.2.11.2}%
+\contentsline {subsection}{\numberline {2.11.3}Outras funções úteis}{29}{subsection.2.11.3}%
+\contentsline {section}{\numberline {2.12}Ordenar \texttt {struct}, lambdas e \texttt {auto}}{30}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Por que \texttt {sort} às vezes ``não compila''}{30}{subsection.2.12.1}%
+\contentsline {subsection}{\numberline {2.12.2}Exemplo de critério com desempate}{30}{subsection.2.12.2}%
+\contentsline {subsection}{\numberline {2.12.3}\texttt {auto}}{30}{subsection.2.12.3}%
+\contentsline {section}{\numberline {2.13}\texttt {string}, \texttt {stringstream} e \texttt {bitset}}{31}{section.2.13}%
+\contentsline {subsection}{\numberline {2.13.1}\texttt {string}}{31}{subsection.2.13.1}%
+\contentsline {subsection}{\numberline {2.13.2}\texttt {stringstream}}{31}{subsection.2.13.2}%
+\contentsline {subsection}{\numberline {2.13.3}\texttt {bitset} e máscaras}{31}{subsection.2.13.3}%
+\contentsline {section}{\numberline {2.14}Guia rápido: qual estrutura escolher?}{32}{section.2.14}%
