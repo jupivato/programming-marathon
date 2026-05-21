@@ -42,6 +42,14 @@
   citecolor=apostilarosa
 }
 
+% Sumário em preto; demais links internos continuam rosa
+\let\oldtableofcontents\tableofcontents
+\renewcommand{\tableofcontents}{%
+  \hypersetup{linkcolor=black}%
+  \oldtableofcontents
+  \hypersetup{linkcolor=apostilarosa}%
+}
+
 \usepackage{listings}
 \usepackage{float}
 \usepackage{caption}

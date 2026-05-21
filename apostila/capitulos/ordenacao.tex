@@ -1,0 +1,207 @@
+\chapter{Ordenação}
+
+\medskip
+\noindent\textbf{Nota sobre os arquivos de código:} os templates usam ponteiros e constantes globais (\texttt{MAX}, \texttt{n}, \texttt{k}) herdadas do material original --- antes de compilar, defina esses valores no seu programa ou adapte para \texttt{vector}.
+
+%==============================================================================
+\section{Visão geral: qual ordenação usar?}
+%==============================================================================
+
+\subsection{Na prova: \texttt{sort} primeiro}
+
+Se o juiz só pede ``ordene o vetor'' ou você precisa de arestas por peso, \texttt{sort(v.begin(), v.end())} resolve em $O(n \log n)$. Os algoritmos abaixo são raros como \textbf{única} ferramenta da solução, mas ajudam a entender limites de tempo e técnicas reutilizáveis (merge em outros problemas, heap para fila de prioridade, contagem quando os valores são pequenos).
+
+\subsection{Tabela de complexidades}
+
+\begin{center}
+\small
+\begin{tabular}{@{}llll@{}}
+  \toprule
+  \textbf{Algoritmo} & \textbf{Melhor} & \textbf{Médio} & \textbf{Pior} \\
+  \midrule
+  Bubble / Selection & $O(n^2)$ & $O(n^2)$ & $O(n^2)$ \\
+  Insertion & $O(n)$ & $O(n^2)$ & $O(n^2)$ \\
+  Shell & --- & $O(n^{4/3})$ a $O(n^{3/2})$ & $O(n^2)$ \\
+  Merge sort & $O(n \log n)$ & $O(n \log n)$ & $O(n \log n)$ \\
+  Quick sort & $O(n \log n)$ & $O(n \log n)$ & $O(n^2)$ \\
+  Heap sort & $O(n \log n)$ & $O(n \log n)$ & $O(n \log n)$ \\
+  Counting sort & $O(n + k)$ & $O(n + k)$ & $O(n + k)$ \\
+  \texttt{sort} (STL) & $O(n \log n)$ & $O(n \log n)$ & $O(n \log n)$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent$k$ = faixa de valores no counting sort (ex.: notas de 0 a 100 $\Rightarrow$ $k \approx 101$).
+
+\subsection{Estável vs.\ in-place}
+
+\begin{itemize}[nosep]
+  \item \textbf{Estável:} elementos iguais mantêm a ordem relativa de entrada (merge sort, insertion sort; counting sort se implementado corretamente).
+  \item \textbf{In-place:} usa $O(1)$ de memória extra além do vetor (bubble, selection, insertion, shell, quick, heap; merge sort precisa de auxiliar).
+\end{itemize}
+
+\begin{exemplodiabox}
+Você tem pares \texttt{(nota, nome)} e quer ordenar por nota sem embaralhar quem empatou na fila de chegada. Prefira algo \textbf{estável} ou use \texttt{sort} com cuidado (a STL não garante estabilidade no \texttt{sort} padrão --- use \texttt{stable\_sort} se a ordem de empate importar).
+\end{exemplodiabox}
+
+%==============================================================================
+\section{Ordenações simples ($O(n^2)$)}
+%==============================================================================
+
+Ideia comum: dois índices (ou um índice + varredura) comparam e \textbf{trocam} elementos até o vetor ficar ordenado. Fáceis de escrever; lentas para $n$ grande ($n > 10^4$ costuma ser arriscado).
+
+%------------------------------------------------------------------------------
+\subsection{Bubble sort}
+%------------------------------------------------------------------------------
+
+\textbf{Ideia:} a cada passada, o maior elemento ``borbulha'' até o final; repete até não haver troca.
+
+\textbf{Complexidade:} $O(n^2)$.
+
+\textbf{Na prova:} quase nunca é a melhor escolha; útil só para entender trocas adjacentes ou vetores minúsculos.
+
+\begin{exemplodiabox}
+Imagine cartas em fila: você compara vizinhos e troca se estiverem na ordem errada. Após uma passada, a carta mais alta já está no fim. Repete até ninguém trocar.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/bubble_sort.cpp}
+
+%------------------------------------------------------------------------------
+\subsection{Selection sort}
+%------------------------------------------------------------------------------
+
+\textbf{Ideia:} na posição $i$, busca o \textbf{menor} entre $i \ldots n-1$ e troca com $v[i]$.
+
+\textbf{Complexidade:} $O(n^2)$ sempre (não melhora se o vetor já estiver ordenado).
+
+\textbf{Na prova:} raro; o número de \textbf{trocas} é no máximo $n-1$ (útil só em exercícios teóricos).
+
+\begin{exemplodiabox}
+Montar uma fila ordenada de alturas: a cada passo você escolhe a pessoa mais baixa que ainda não está na parte esquerda já fixada e a coloca na próxima cadeira.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/selection_sort.cpp}
+
+%------------------------------------------------------------------------------
+\subsection{Insertion sort}
+%------------------------------------------------------------------------------
+
+\textbf{Ideia:} como ordenar cartas na mão: para cada carta nova, desliza para a esquerda até achar o lugar certo.
+
+\textbf{Complexidade:} $O(n^2)$ no pior caso; $O(n)$ se o vetor já estiver quase ordenado.
+
+\textbf{Na prova:} vetores pequenos ou quase ordenados; base do shell sort.
+
+\begin{exemplodiabox}
+A parte esquerda do vetor já está ordenada. Você pega o próximo elemento e encaixa na posição correta deslocando os maiores uma casa para a direita.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/insertion_sort.cpp}
+
+%------------------------------------------------------------------------------
+\subsection{Shell sort}
+%------------------------------------------------------------------------------
+
+\textbf{Ideia:} insertion sort com ``saltos'' de tamanho $h$ (gap); $h$ vai diminuindo (ex.: $n/2, n/4, \ldots, 1$) até virar insertion sort normal.
+
+\textbf{Complexidade:} entre $O(n \log n)$ e $O(n^2)$ conforme a sequência de gaps.
+
+\textbf{Na prova:} pouco comum hoje; aparece em material clássico e como ponte entre $O(n^2)$ e métodos melhores.
+
+\begin{exemplodiabox}
+Antes de comparar vizinhos colados, você compara elementos distantes e já aproxima valores grandes e pequenos. No final, com gap $1$, o vetor está quase pronto e o insertion sort termina rápido.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/shell_sort.cpp}
+
+%==============================================================================
+\section{Divide e conquista}
+%==============================================================================
+
+Quebram o vetor em pedaços, ordenam os pedaços e \textbf{juntam} (merge) ou \textbf{particionam} em torno de um pivô (quick).
+
+%------------------------------------------------------------------------------
+\subsection{Merge sort}
+%------------------------------------------------------------------------------
+
+\textbf{Ideia:} divide ao meio, ordena cada metade recursivamente, \textbf{intercala} duas metades ordenadas em um vetor só.
+
+\textbf{Complexidade:} $O(n \log n)$; memória extra $O(n)$ para os subvetores \texttt{left} e \texttt{right}.
+
+\textbf{Estável:} sim, se a intercalação usar $\leq$ no elemento da esquerda quando empatar.
+
+\textbf{Na prova:} inversões, ``ordenar e intercalar listas'', offline queries; a função \texttt{intercala} reaparece em outros contextos.
+
+\begin{exemplodiabox}
+Duas pilhas de papéis já numerados em ordem: para juntar em uma só pilha ordenada, sempre pegue o menor entre os dois topos. Isso é exatamente o passo \texttt{intercala}.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/merge_sort.cpp}
+
+%------------------------------------------------------------------------------
+\subsection{Quick sort}
+%------------------------------------------------------------------------------
+
+\textbf{Ideia:} escolhe um \textbf{pivô} (aqui: primeiro elemento), rearranja para tudo menor à esquerda e maior à direita, recursão nas duas partes.
+
+\textbf{Complexidade:} $O(n \log n)$ em média; $O(n^2)$ se o pivô for sempre mínimo ou máximo (vetor já ordenado com pivô fixo no início).
+
+\textbf{Na prova:} particionamento (Dutch national flag, quickselect para $k$-ésimo menor); a STL usa variantes otimizadas no \texttt{sort}.
+
+\textbf{Erro comum:} esquecer de mover o pivô para a posição final após os swaps (\texttt{particiona} no código faz isso).
+
+\begin{exemplodiabox}
+Escolher uma altura de referência (pivô): quem é mais baixo fica à esquerda, mais alto à direita. Depois você só precisa ordenar cada lado --- sem misturar os dois grupos de novo.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/quick_sort.cpp}
+
+%==============================================================================
+\section{Heap sort}
+%==============================================================================
+
+\textbf{Ideia:} transforma o vetor em uma \textbf{heap} (árvore em array: filho em $2i+1$, $2i+2$); repetidamente tira o máximo (raiz), coloca no final e reajusta a heap.
+
+\textbf{Complexidade:} $O(n \log n)$; memória $O(1)$ extra além do vetor.
+
+\textbf{Na prova:} o mesmo \texttt{heapfy} aparece em \texttt{priority\_queue}; ordenar com heap é menos comum que usar \texttt{sort}, mas fixa a ideia da heap.
+
+\begin{exemplodiabox}
+O maior elemento está sempre no ``topo'' da montanha (índice 0). Você troca com o último lugar da fila ordenada, diminui a montanha e desce o novo topo até a posição certa (\texttt{heapfy}).
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/heapsort.cpp}
+
+%==============================================================================
+\section{Counting sort}
+%==============================================================================
+
+\textbf{Ideia:} se os valores estão em um intervalo pequeno $0 \ldots k-1$, \textbf{conta} quantas vezes cada valor aparece e reconstrói o vetor ordenado sem comparar pares.
+
+\textbf{Complexidade:} $O(n + k)$ tempo e $O(k)$ memória auxiliar.
+
+\textbf{Quando usar:} notas, idades, letras (após mapear para inteiro), frequência em array limitado.
+
+\textbf{Limitação:} $k$ muito grande (ex.: $10^9$) inviabiliza o vetor \texttt{aux}.
+
+\begin{exemplodiabox}
+Em vez de comparar cada aluno com cada aluno, você marca num quadro quantos tiraram 0, 1, 2, \ldots, 10. Depois lê o quadro da esquerda para a direita e reescreve a lista --- já ordenada.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/ordenacao/counting_sort.cpp}
+
+%==============================================================================
+\section{Resumo prático para maratona}
+%==============================================================================
+
+\begin{itemize}[nosep]
+  \item \textbf{Padrão:} \texttt{sort} / \texttt{stable\_sort} com \texttt{vector} (capítulo de C++).
+  \item \textbf{Valores pequenos e inteiros:} counting sort ou array de frequência.
+  \item \textbf{$k$-ésimo menor, top $K$:} \texttt{priority\_queue} ou \texttt{nth\_element}, não bubble sort.
+  \item \textbf{Estudar merge/quick/heap:} entender recursão, particionamento e heap --- reaparecem em grafos, DP e estruturas.
+  \item \textbf{Implementar $O(n^2)$ na prova:} só com $n$ muito pequeno ou como subrotina clara; prefira STL.
+\end{itemize}
+
+\begin{exemplodiabox}
+Problema: ``ordene as arestas por peso e rode Kruskal''. Você não reimplementa merge sort --- declara \texttt{vector<pair<int,int>>} e \texttt{sort(arestas.begin(), arestas.end())}. O capítulo de ordenação te dá confiança na complexidade; o capítulo de C++ te dá a linha de código.
+\end{exemplodiabox}

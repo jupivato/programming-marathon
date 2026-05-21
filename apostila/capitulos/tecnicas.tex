@@ -1,0 +1,249 @@
+\chapter{Técnicas clássicas}
+
+Este capítulo reúne padrões que aparecem o tempo todo em maratona: \textbf{soma de prefixo}, \textbf{dois ponteiros}, \textbf{janela deslizante} (fixa ou variável) e uma \textbf{cola} de I/O e truques de bits.
+
+\textbf{Relação com outros capítulos:} você já viu \texttt{vector}, \texttt{pair}, \texttt{sort} e leitura rápida no capítulo de C++. Aqui o foco é \textbf{como percorrer} um array ou string em $O(n)$ sem testar todas as substrings ou submatrizes ($O(n^2)$ ou pior).
+
+\textbf{Como ler:} em cada técnica há (1) \textbf{quando reconhecer o problema}, (2) \textbf{ideia do algoritmo}, (3) \textbf{complexidade}, (4) caixa \texttt{exemplodiabox} e (5) código em \texttt{codigos/algoritmos\_avulsos/tecnico/}.
+
+%==============================================================================
+\section{Visão geral: dois ponteiros e janela deslizante}
+%==============================================================================
+
+\subsection{Dois ponteiros (\texttt{left} e \texttt{right})}
+
+Dois índices percorrem o mesmo vetor (ou string). Em geral:
+
+\begin{itemize}[nosep]
+  \item \texttt{right} avança e \textbf{expande} a janela (soma, conjunto de caracteres, etc.);
+  \item \texttt{left} avança e \textbf{encolhe} a janela quando alguma regra é violada ou quando já dá para registrar uma resposta melhor.
+\end{itemize}
+
+\textbf{Complexidade típica:} cada posição entra e sai da janela no máximo uma vez $\Rightarrow$ $O(n)$.
+
+\subsection{Janela fixa vs.\ variável}
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  \textbf{Tipo} & \textbf{Tamanho} & \textbf{Exemplo neste capítulo} \\
+  \midrule
+  Fixa & sempre $k$ & soma máxima de $k$ elementos; máximo em cada janela \\
+  Variável & cresce e diminui & menor subarray com soma $\geq$ alvo; maior substring sem repetir \\
+  2D & bloco $k \times k$ & soma máxima em submatriz \\
+  Ordenado & dois índices & par com soma alvo; mesclar vetores ordenados \\
+  Prefixo & array \texttt{pref} & soma de $[l,r]$ em $O(1)$; contar subarrays com soma $k$ \\
+  Resposta & busca em $[L, R]$ & menor capacidade; maior distância mínima \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Como saber se o problema pede isso}
+
+\begin{itemize}[nosep]
+  \item ``subarray'', ``substring'', ``segmento contíguo'', ``janela de tamanho $k$'';
+  \item soma / contagem em intervalo \textbf{contínuo} (não qualquer subconjunto);
+  \item ``menor comprimento que satisfaz\ldots'' ou ``maior comprimento sem repetir\ldots''.
+\end{itemize}
+
+\begin{exemplodiabox}
+Em vez de testar todos os intervalos $[i, j]$ ($O(n^2)$), você mantém um intervalo \textbf{válido} $[\texttt{left}, \texttt{right}]$ e só move as bordas. É como uma cortina de tamanho variável: puxa a direita para incluir mais, puxa a esquerda para excluir o que estourou a regra.
+\end{exemplodiabox}
+
+%==============================================================================
+\section{Cola: I/O, \texttt{pair}, infinito e bits}
+%==============================================================================
+
+Arquivo de \textbf{trechos} (não é um programa completo --- copie o que precisar para dentro do \texttt{main} ou de funções).
+
+\textbf{Na prova:} \texttt{fixed}/\texttt{setprecision} em geometria; \texttt{INF} em grafos; \texttt{printf("\%X")} quando o enunciado pede hexadecimal; operações de bit em máscaras e DP com subsets.
+
+\begin{exemplodiabox}
+\texttt{INF = 0x3F3F3F3F} é um truque clássico: cabe em \texttt{int}, somas de dois ``infs'' ainda não estouram tão fácil quanto \texttt{1e9}, e distância ``infinita'' vira um número grande mas comparável.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/io_utilidades.cpp}
+
+%==============================================================================
+\section{Soma de prefixo (1D)}
+%==============================================================================
+
+\textbf{Problema típico:} muitas consultas ``qual a soma do trecho $[l, r]$?'' ou ``quantos subarrays têm soma exatamente $k$?''
+
+\textbf{Ideia:} construa \texttt{pref} com \texttt{pref[0]=0} e \texttt{pref[i+1]=pref[i]+arr[i]}. A soma do intervalo é \texttt{pref[r+1]-pref[l]}.
+
+\textbf{Subarrays com soma $k$ (com negativos):} ao percorrer, a soma dos prefixos já vistos que vale \texttt{sum-k} indica quantos trechos terminam na posição atual com soma $k$. Use \texttt{unordered\_map} ou \texttt{map}.
+
+\textbf{Complexidade:} montar prefixo $O(n)$; cada consulta de intervalo $O(1)$; contar subarrays com soma $k$ em $O(n)$.
+
+\textbf{Relação com janela:} números \textbf{só positivos} $\Rightarrow$ janela variável; com \textbf{negativos} $\Rightarrow$ prefixo + mapa é o caminho padrão.
+
+\begin{exemplodiabox}
+\texttt{pref} é como um placar acumulado na corrida: a distância entre os placares nas posições $l$ e $r+1$ é exatamente o que você correu entre $l$ e $r$.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/prefix_sum_1d.cpp}
+
+%==============================================================================
+\section{Dois ponteiros em vetor ordenado}
+%==============================================================================
+
+\textbf{Problema típico:} vetor \textbf{já ordenado}; existe par com soma \texttt{target}? Ou juntar dois vetores ordenados.
+
+\textbf{Ideia:} \texttt{l} no início, \texttt{r} no fim. Se a soma for pequena, \texttt{l++}; se for grande, \texttt{r--}. Para duplicatas em vetor ordenado, só copie quando \texttt{a[i] != a[k-1]}.
+
+\textbf{Complexidade:} $O(n)$.
+
+\textbf{Na prova:} versão com \texttt{lower\_bound}/\texttt{binary\_search} no capítulo de C++; dois ponteiros evita busca repetida quando os dois índices andam em monotonia.
+
+\begin{exemplodiabox}
+Lista de alturas ordenada: um ponteiro no mais baixo, outro no mais alto. Se a soma passar do alvo, o mais alto desce; se faltar, o mais baixo sobe --- sem testar todos os pares.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/dois_ponteiros_ordenado.cpp}
+
+%==============================================================================
+\section{Janela de tamanho fixo: soma máxima de $k$ elementos}
+%==============================================================================
+
+\textbf{Problema típico:} dado um vetor e um inteiro $k$, qual a \textbf{maior soma} de $k$ elementos \textbf{consecutivos}?
+
+\textbf{Ideia:} calcule a soma dos primeiros $k$; depois deslize: some o elemento que entra à direita e subtraia o que saiu à esquerda.
+
+\textbf{Complexidade:} $O(n)$ tempo, $O(1)$ memória extra.
+
+\textbf{Erro comum:} recalcular a soma dos $k$ elementos do zero a cada passo ($O(nk)$).
+
+\begin{exemplodiabox}
+Termômetro com $k$ dias seguidos: você sabe a média (soma) da semana 1--7; para a semana 2--8, não soma de novo os 7 dias --- tira o dia 1 e acrescenta o dia 8.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/janela_soma_max_k.cpp}
+
+%==============================================================================
+\section{Janela de tamanho fixo: máximo em cada janela de $k$ elementos}
+%==============================================================================
+
+\textbf{Problema típico:} para \textbf{cada} janela contígua de tamanho $k$, qual o \textbf{maior} elemento? (não só uma janela --- o vetor de respostas tem tamanho $n-k+1$.)
+
+\textbf{Ideia:} \texttt{deque} de \textbf{índices} em ordem decrescente de valor. Remove da frente índices que saíram da janela; remove da traseira valores $\leq$ o atual (nunca serão máximo); máximo = frente do deque.
+
+\textbf{Complexidade:} $O(n)$ --- cada índice entra e sai do deque uma vez.
+
+\textbf{Erro comum:} usar \texttt{priority\_queue} e inserir/remover $k$ vezes por janela ($O(n \log k)$ ou pior); o deque mantém linear.
+
+\textbf{Na prova:} fila de temperaturas, máximo em stream; base para alguns problemas de monotonia.
+
+\begin{exemplodiabox}
+Fila de candidatos a ``campeão da janela'': quem é menor que o recém-chegado nunca vira máximo enquanto o novo estiver na janela --- sai da fila traseira. Quem saiu da janela pela esquerda também sai.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/janela_maximo_k.cpp}
+
+%==============================================================================
+\section{Janela variável: menor subarray com soma $\geq$ alvo}
+%==============================================================================
+
+\textbf{Problema típico:} números positivos e um \texttt{target}; qual o \textbf{menor comprimento} de um subarray contíguo cuja soma seja $\geq$ \texttt{target}? (Se não existir, retorne 0.)
+
+\textbf{Ideia:} \texttt{right} expande a soma; enquanto \texttt{sum >= target}, atualize o mínimo de tamanho e avance \texttt{left} subtraindo \texttt{nums[left]}.
+
+\textbf{Por que funciona com positivos:} aumentar \texttt{right} só aumenta a soma; por isso, quando a janela já é válida, encolher pelo \texttt{left} não prejudica a busca pelo \textbf{menor} tamanho.
+
+\textbf{Complexidade:} $O(n)$.
+
+\textbf{Na prova:} versões com ``mínimo de elementos'', ``capacidade de caminhão'', às vezes após prefix sum + binary search (outra técnica).
+
+\begin{exemplodiabox}
+Você quer juntar dinheiro até pagar uma conta (\texttt{target}). Vai colocando notas uma a uma (\texttt{right++}). Assim que o montante basta, tira notas da esquerda até voltar a faltar --- e registra quantas notas usou nesse momento.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/subarray_soma_minima.cpp}
+
+%==============================================================================
+\section{Janela variável em string: maior substring sem repetir}
+%==============================================================================
+
+\textbf{Problema típico:} maior substring em que \textbf{nenhum caractere se repete} (estilo ``longest substring without repeating characters'').
+
+\textbf{Ideia:} \texttt{right} inclui \texttt{s[right]}; se o caractere já está na janela, avance \texttt{left} removendo da estrutura até a repetição sumir; use \texttt{unordered\_set} ou array de frequência (alfabeto pequeno).
+
+\textbf{Complexidade:} $O(n)$ com set; $O(n)$ com array se o alfabeto for fixo (26 letras).
+
+\textbf{Erro comum:} mover \texttt{left} só uma posição quando há repetição --- pode deixar o caractere duplicado dentro da janela.
+
+\begin{exemplodiabox}
+Uma fila de pessoas com crachás únicos: cada nova pessoa entra pela direita. Se o crachá já está na fila, a primeira pessoa sai pela esquerda até o conflito acabar. O recorde de tamanho da fila é a resposta.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/substring_unica_max.cpp}
+
+%==============================================================================
+\section{Extensão 2D: submatriz \texorpdfstring{$k \times k$}{k por k} de soma máxima}
+%==============================================================================
+
+\textbf{Problema típico:} matriz de inteiros e um $k$; qual a \textbf{maior soma} de uma submatriz contígua de tamanho $k \times k$?
+
+\textbf{Ideia em duas camadas:}
+\begin{enumerate}[nosep]
+  \item Para cada \textbf{coluna}, use janela vertical de altura $k$ e guarde em \texttt{stripSum[i][j]} a soma da faixa vertical $k$ células terminando na linha $i$ (mesmo truque ``entra embaixo, sai em cima'').
+  \item Para cada \textbf{linha} $i$ válida, trate \texttt{stripSum[i][*]} como um array 1D e aplique janela horizontal de largura $k$ para achar a soma máxima daquele ``tira''.
+\end{enumerate}
+
+\textbf{Complexidade:} $O(R \cdot C)$ para matriz $R \times C$.
+
+\textbf{Na prova:} problemas de mapa / grade; exige cuidado com índices e com $k$ maior que $R$ ou $C$.
+
+\begin{exemplodiabox}
+Primeiro você resume cada \textbf{coluna} em faixas de altura $k$ (como cortar tiras verticais). Depois, em cada linha, você desliza uma janela de largura $k$ sobre essas tiras já resumidas --- como somar retângulos sem recalcular célula a célula.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/submatriz_soma_max_k.cpp}
+
+%==============================================================================
+\section{Busca binária na resposta}
+%==============================================================================
+
+\textbf{Problema típico:} não é ``ache o índice de $x$ em um vetor ordenado'', e sim ``qual o \textbf{menor} (ou \textbf{maior}) valor $ans$ que ainda satisfaz uma regra?'' Exemplos: menor capacidade para dividir o array em $k$ partes; maior distância mínima entre postos escolhidos.
+
+\textbf{Quando usar:} a resposta é um número inteiro em um intervalo $[L, R]$ e existe um limiar: se $ans$ funciona, qualquer valor \textbf{maior} (ou menor, conforme o problema) também funciona --- função \texttt{ok(ans)} \textbf{monótona}.
+
+\textbf{Ideia:}
+\begin{enumerate}[nosep]
+  \item Defina \texttt{ok(x)} --- dá para atender a regra com parâmetro $x$? (simulação, greedy, outra busca).
+  \item Busque em $[L, R]$: \textbf{menor} $x$ com \texttt{ok(x)} $\Rightarrow$ \texttt{primeiroVerdadeiro}; \textbf{maior} $x$ com \texttt{ok(x)} $\Rightarrow$ \texttt{ultimoVerdadeiro}.
+\end{enumerate}
+
+\textbf{Complexidade:} $O(\log(R-L) \cdot \text{custo de ok})$.
+
+\textbf{Diferença do \texttt{binary\_search} da STL:} a STL busca em estrutura \textbf{ordenada}; aqui você busca o \textbf{valor da resposta} e cada teste chama uma função de viabilidade.
+
+\textbf{Erros comuns:} intervalo $[L,R]$ errado (muito pequeno e perde a resposta); usar \texttt{mid = (lo+hi)/2} sem \texttt{+1} no ``último verdadeiro'' e entrar em loop; confundir minimizar com maximizar a monotonia de \texttt{ok}.
+
+\begin{exemplodiabox}
+``Qual a menor capacidade do caminhão para levar todos os pacotes em no máximo $k$ viagens?'' A resposta está entre o maior pacote e a soma de todos. Teste \texttt{ok(cap)} = ``dá para particionar em $\leq k$ viagens sem estourar \texttt{cap}''. Se \texttt{ok(100)} é verdadeiro, \texttt{ok(101)} também --- monotônico; busque o primeiro \texttt{cap} que funciona.
+\end{exemplodiabox}
+
+\incluircpp{algoritmos_avulsos/tecnico/busca_binaria_resposta.cpp}
+
+%==============================================================================
+\section{Resumo prático para maratona}
+%==============================================================================
+
+\begin{itemize}[nosep]
+  \item \textbf{Muitas somas em intervalos:} prefixo 1D; com negativos e soma exata $k$, mapa de frequências.
+  \item \textbf{Vetor ordenado + par / mesclar:} dois ponteiros nas pontas ou merge linear.
+  \item \textbf{Intervalo contíguo + otimizar em linear:} pense em \texttt{left}/\texttt{right} antes de $O(n^2)$.
+  \item \textbf{$k$ fixo (soma):} uma passada com ``+$v[i]$, $-v[i-k]$''.
+  \item \textbf{$k$ fixo (máximo em cada janela):} deque de índices monotônica.
+  \item \textbf{Soma $\geq$ alvo, números positivos:} expande \texttt{right}, encolhe \texttt{left} no \texttt{while}.
+  \item \textbf{Sem repetição em string:} set ou freq; remova pela esquerda até ficar válido.
+  \item \textbf{Grade $k \times k$:} comprima linhas/colunas com prefixo/janela 1D, depois janela na outra dimensão.
+  \item \textbf{Minimizar/maximizar valor da resposta com \texttt{ok} monotônico:} busca binária em $[L,R]$, não força bruta no valor.
+  \item \textbf{Cola \texttt{io\_utilidades}:} consulte no começo da prova se precisar de \texttt{INF}, hex ou bit.
+\end{itemize}
+
+\begin{exemplodiabox}
+Enunciado: ``ache o menor número de dias consecutivos cuja venda total seja pelo menos $S$''. Tradução: array de vendas diárias (positivas), \texttt{target = S}, função \texttt{minSubArrayLen} --- janela variável, não força bruta em todos os $[l,r]$.
+\end{exemplodiabox}
