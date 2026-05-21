@@ -11,8 +11,14 @@
   \usepackage{lmodern}
 \fi
 \usepackage[english]{babel}
-\renewcommand{\contentsname}{Sumário}
-\renewcommand{\chaptername}{Capítulo}
+\addto\captionsenglish{%
+  \renewcommand{\contentsname}{Sumário}%
+  \renewcommand{\chaptername}{Capítulo}%
+}
+\AtBeginDocument{%
+  \renewcommand{\contentsname}{Sumário}%
+  \renewcommand{\chaptername}{Capítulo}%
+}
 \usepackage{microtype}
 \usepackage{geometry}
 \geometry{margin=2.5cm}
@@ -20,18 +26,20 @@
 
 \usepackage{graphicx}
 \usepackage{xcolor}
+\definecolor{apostilarosa}{RGB}{210,88,138} % links e palavras-chave no código
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{mathtools}
 \usepackage{enumitem}
 \DeclareMathOperator{\mdc}{mdc}
 \DeclareMathOperator{\mmc}{mmc}
 \usepackage{booktabs}
+\usepackage[most]{tcolorbox}
 \usepackage{hyperref}
 \hypersetup{
   colorlinks=true,
-  linkcolor=blue!60!black,
-  urlcolor=blue!70!black,
-  citecolor=green!50!black
+  linkcolor=apostilarosa,
+  urlcolor=apostilarosa,
+  citecolor=apostilarosa
 }
 
 \usepackage{listings}
@@ -42,9 +50,34 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[LE,RO]{\leftmark}
+\fancyhead[LE,RO]{\nouppercase\leftmark}
 \fancyhead[LO,RE]{\thepage}
 \fancyfoot[C]{Apostila de Maratona de Programação}
 \renewcommand{\headrulewidth}{0.4pt}
 
+% Evita folhas em branco entre capa, sumário e capítulos (modo livro)
+\let\cleardoublepage\clearpage
+
 \input{config/listings-cpp}
+
+% Caixa de exemplo didático — parágrafos, itemize, etc.:
+%   \begin{exemplodiabox} ... \end{exemplodiabox}
+\definecolor{exemplobg}{RGB}{198,190,208}      % cinza-arroxeado (mais escuro que o fundo do código)
+\definecolor{exemploframe}{RGB}{108,100,122}   % borda visível
+\newtcolorbox{exemplodiabox}{
+  enhanced,
+  colback=exemplobg,
+  colframe=exemploframe,
+  boxrule=0.9pt,
+  arc=4pt,
+  left=10pt,
+  right=10pt,
+  top=7pt,
+  bottom=7pt,
+  before skip=0.55em,
+  after skip=0.55em,
+  fontupper=\small,
+  parbox=true,
+  boxsep=0pt,
+  before upper={\setlength{\parskip}{0.45em}},
+}

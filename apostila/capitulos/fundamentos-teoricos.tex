@@ -1,7 +1,7 @@
 \chapter{Fundamentos Teóricos}
 
 Este capítulo reúne fórmulas e raciocínios que aparecem o tempo todo em maratona.
-Para cada item você verá: \textbf{o que é}, \textbf{para que serve} na prova e um trecho em C++ (pasta \texttt{codigos/formulas\_teoria/}).
+Para cada item você verá: \textbf{o que é}, \textbf{para que serve} na prova, um \textbf{exemplo em linguagem simples} (ambiente \texttt{exemplodiabox}) e um trecho em C++ (pasta \texttt{codigos/formulas\_teoria/}).
 
 %==============================================================================
 \section{Combinatória}
@@ -15,8 +15,13 @@ Quando o enunciado pergunta ``de quantas maneiras'' ou ``quantas sequências'', 
 \textbf{Permutações} --- ordenar $n$ objetos distintos:
 \begin{equation}
   P(n) = n!
-\end{equation}
+\end{equation}  
 \emph{Para que serve:} filas, anagramas, permutações de um vetor, força bruta ordenada quando $n$ é pequeno ($n \le 10$).
+
+\begin{exemplodiabox}
+Cinco amigos vão tirar foto em fila. A pergunta é: de quantas \emph{ordens} diferentes eles podem ficar? Como todos são diferentes e a posição importa, é permutação: $5! = 120$ filas possíveis. Se o problema só pede ``reorganizar tudo'', sem escolher um subgrupo menor, pense em $n!$.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=5,lastline=9]{formulas_teoria/combinatoria.cpp}
 
@@ -25,6 +30,11 @@ Quando o enunciado pergunta ``de quantas maneiras'' ou ``quantas sequências'', 
   A(n,k) = \frac{n!}{(n-k)!}
 \end{equation}
 \emph{Para que serve:} quando a \textbf{ordem importa}, mas nem todos os $n$ entram (ex.: top 3 de um ranking).
+
+\begin{exemplodiabox}
+Em uma corrida com 20 corredores, quantas formas existem de ouro, prata e bronze? Escolhemos 3 pessoas \emph{e} a ordem das medalhas importa: isso é arranjo, não combinação. Se o enunciado disser ``top 3'' ou ``primeiro, segundo e terceiro lugares distintos'', use arranjo; se disser só ``quais três ficaram no pódio, sem distinguir medalha'', aí seria combinação.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=12,lastline=14]{formulas_teoria/combinatoria.cpp}
 
@@ -35,6 +45,11 @@ Quando o enunciado pergunta ``de quantas maneiras'' ou ``quantas sequências'', 
 \emph{Para que serve:} comitês, subconjuntos, arestas de um grafo completo, coeficientes em contagens.
 Em provas com $n \le 10^6$, calcule com fórmula iterativa ou pré-compute fatoriais --- não use $n!$ direto.
 
+\begin{exemplodiabox}
+Uma turma de 30 alunos vai escolher 4 representantes para uma reunião. Não importa quem é ``primeiro'' ou ``segundo'' representante --- só importa \emph{quem entrou no grupo}. Isso é combinação: $\binom{30}{4}$. Analogia: escolher 3 sabores de sorvete entre 10; trocar a ordem dos sabores no copo não cria um pedido novo.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=17,lastline=24]{formulas_teoria/combinatoria.cpp}
 
 \textbf{Relação de Stifel} (Pascal):
@@ -43,6 +58,11 @@ Em provas com $n \le 10^6$, calcule com fórmula iterativa ou pré-compute fator
 \end{equation}
 \emph{Para que serve:} DP em triângulo de Pascal, construir tabela de $\binom{n}{k}$ para muitos testes, provas combinatórias.
 
+\begin{exemplodiabox}
+Lembra do triângulo de Pascal da escola? Cada número é a soma dos dois de cima. Quando a prova pede ``quantos caminhos até o ponto $(n,k)$'' ou quer montar uma tabela de combinações para milhares de consultas, você constrói linha a linha com essa soma --- sem calcular fatorial gigante de novo a cada vez.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=27,lastline=31]{formulas_teoria/combinatoria.cpp}
 
 \textbf{Vandermonde:}
@@ -50,6 +70,11 @@ Em provas com $n \le 10^6$, calcule com fórmula iterativa ou pré-compute fator
   \binom{m+n}{r} = \sum_{k=0}^{r} \binom{m}{k}\binom{n}{r-k}
 \end{equation}
 \emph{Para que serve:} juntar duas fontes de escolha (ex.: escolher $r$ itens entre dois grupos de tamanhos $m$ e $n$).
+
+\begin{exemplodiabox}
+Você precisa montar um time de 5 pessoas pegando alguns do time A (10 jogadores) e o resto do time B (8 jogadores). Pode ser 2 de A e 3 de B, ou 0 de A e 5 de B, etc. Vandermonde resume isso: somar, para cada $k$, ``escolho $k$ de A \emph{e} $5-k$ de B''. Use quando o enunciado divide objetos em \textbf{dois grupos} e pede escolhas que somam um total fixo.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=34,lastline=39]{formulas_teoria/combinatoria.cpp}
 
@@ -63,6 +88,11 @@ Valores iniciais: $1, 1, 2, 5, 14, 42, \ldots$
 \emph{Para que serve:} parênteses balanceados, triangulações de polígono convexo, caminhos monótonos que \textbf{não passam acima} da diagonal, árvores binárias cheias.
 Se o problema tem ``balanceamento'' ou ``não ultrapassar uma linha'' em grade, suspeite de Catalan.
 
+\begin{exemplodiabox}
+Quantas sequências válidas de parênteses existem com 3 pares? Exemplos: \texttt{()()()}, \texttt{(())}, mas não \texttt{())(}. Outra imagem: sair da origem só para direita e para cima, mas \textbf{nunca} passar acima da diagonal --- caminhos que ``não encostam no teto''. Se o texto fala em empilhar e desempilhar, árvore binária cheia ou triangulação de polígono, o número costuma ser Catalan.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=42,lastline=44]{formulas_teoria/combinatoria.cpp}
 
 \subsection{Stars and Bars (bolas e barras)}
@@ -73,6 +103,11 @@ Conta soluções inteiras \textbf{não negativas} de $x_1 + \cdots + x_k = n$:
 \end{equation}
 \emph{Para que serve:} distribuir $n$ objetos idênticos em $k$ caixas; somas com restrição mínima (troque $x_i' = x_i - 1$).
 Com limites máximos por variável, use DP ou inclusão-exclusão em vez da fórmula fechada.
+
+\begin{exemplodiabox}
+Você tem 10 balas \emph{idênticas} para distribuir entre 4 crianças (cada uma pode ficar com zero ou mais). As balas não são diferentes entre si --- só importa \emph{quantas} cada uma recebeu. Pense em ``bolas iguais e barras separando as caixas'': uma barra a mais que o número de caixas. Se cada criança \emph{precisa} de pelo menos uma bala, primeiro tire 4 balas (uma para cada) e distribua o resto com a mesma ideia.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=47,lastline=49]{formulas_teoria/combinatoria.cpp}
 
@@ -85,6 +120,11 @@ Com limites máximos por variável, use DP ou inclusão-exclusão em vez da fór
 \emph{Para que serve:} contar números até $N$ divisíveis por algum conjunto de primos; ``pelo menos uma propriedade''; evitar superestimar união de eventos.
 Exemplo clássico: quantos inteiros em $[1,N]$ são múltiplos de $a$ \textbf{ou} de $b$?
 
+\begin{exemplodiabox}
+De 1 a 100, quantos números são divisíveis por 3 \textbf{ou} por 5? Contar só os de 3 dá 33; só os de 5 dá 20 --- mas os divisíveis por \textbf{ambos} (15) foram contados duas vezes. A PIE subtrai essa interseção: $33 + 20 - 6 = 47$. Use quando o enunciado mistura várias condições com ``ou'', ``pelo menos uma propriedade'' ou vários divisores.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=57,lastline=61]{formulas_teoria/combinatoria.cpp}
 
 \subsection{Princípio da casa dos pombos}
@@ -94,6 +134,11 @@ Mais geral: alguma caixa tem pelo menos $\lceil n/m \rceil$ itens.
 
 \emph{Para que serve:} provar que \textbf{existe} repetição (cor igual, par com mesma soma mod $k$, dois pontos na mesma célula).
 Não conta quantas configurações existem --- só garante que uma configuração forçada existe.
+
+\begin{exemplodiabox}
+Há 13 pessoas na sala e só 12 signos do zodíaco. Sem saber datas de nascimento, \textbf{tem que existir} pelo menos duas pessoas com o mesmo signo --- não importa qual. Outro caso: 10 meias de cores variadas guardadas em 9 gavetas; alguma gaveta tem duas meias. A técnica não diz \emph{quantas} formas isso acontece; só prova que \textbf{não dá} para evitar a repetição.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=52,lastline=54]{formulas_teoria/combinatoria.cpp}
 
@@ -110,6 +155,11 @@ Aparece em divisibilidade, restos, primos, criptografia básica e qualquer probl
 \end{equation}
 \emph{Para que serve:} simplificar frações, saber se dois números são coprimos ($\mdc=1$), calcular MMC de vários períodos (encontro de ciclos), Euclides estendido para inversos modulares.
 
+\begin{exemplodiabox}
+Um ônibus passa a cada 12 minutos e outro a cada 18. Quando os dois passam juntos de novo no ponto? O MMC de 12 e 18 é 36 --- a cada 36 minutos coincidem. O MDC aparece quando você quer saber se dá para dividir um retângulo $a \times b$ em quadrados iguais maiores possíveis (lado = MDC) ou se dois números não têm divisor comum além de 1 (coprimos).
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=5,lastline=13]{formulas_teoria/numeros.cpp}
 
 \subsection{Congruências e aritmética modular}
@@ -118,6 +168,11 @@ $a \equiv b \pmod{m}$ significa que $a$ e $b$ deixam o mesmo resto ao dividir po
 
 \emph{Para que serve:} trabalhar com ``relógio'' que volta a zero (horário, hash mod $m$, dígitos finais).
 Somas e produtos de restos são válidos; \textbf{cuidado} ao cancelar: $ac \equiv bc \pmod{m}$ só implica $a \equiv b$ se $\mdc(c,m)=1$.
+
+\begin{exemplodiabox}
+São 25 horas depois da meia-noite; no relógio de 12 horas marca 1h (porque $25 \equiv 1 \pmod{12}$). O ``último dígito'' de um número é o resto ao dividir por 10. Em provas, ``resposta mod $10^9+7$'' significa: o número exato pode ser gigante, mas só importa o \textbf{resto} na divisão --- como contar só as horas que o ponteiro ``realmente'' percorreu no mostrador.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=16,lastline=26]{formulas_teoria/numeros.cpp}
 
@@ -128,6 +183,11 @@ Inverso modular (primo $p$): $a^{-1} \equiv a^{p-2} \pmod{p}$.
 
 \emph{Para que serve:} dividir mod primo, combinar com exponenciação rápida, testes de primalidade simples.
 É a base de muitos problemas com ``resposta mod $10^9+7$'' quando o módulo é primo.
+
+\begin{exemplodiabox}
+Precisa calcular algo como $7^{1000000} \bmod 1000000007$ (número primo na prova). Não dá para escrever o $7$ elevado na tela. Fermat diz que, com módulo primo, dá para reduzir expoentes e achar \textbf{inversos} (``dividir'' mod primo multiplicando por uma potência especial). Se o enunciado fala em potência enorme e módulo primo, pense em exponenciação rápida + Fermat.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=29,lastline=43]{formulas_teoria/numeros.cpp}
 
@@ -141,6 +201,11 @@ $\varphi(n)$ = quantos inteiros em $[1,n]$ são coprimos com $n$.
 
 \emph{Para que serve:} expoentes módulo composto, contar números ``invertíveis'' mod $n$, generalizar Fermat quando o módulo não é primo.
 
+\begin{exemplodiabox}
+De 1 a 12, quantos números não compartilham fator primo com 12? (Coprimos: 1, 5, 7, 11 --- são 4, e $\varphi(12)=4$.) Use totiente quando o módulo \textbf{não é primo} mas você ainda precisa simplificar potências ou contar quantos candidatos têm inverso modular. É a versão ``para qualquer $n$'' do truque de Fermat.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=46,lastline=56]{formulas_teoria/numeros.cpp}
 
 \subsection{Teorema chinês do resto (CRT)}
@@ -148,6 +213,11 @@ $\varphi(n)$ = quantos inteiros em $[1,n]$ são coprimos com $n$.
 Vários restos $x \equiv a_i \pmod{m_i}$ com $\mdc(m_i,m_j)=1$ têm solução única mod $m_1\cdots m_k$.
 
 \emph{Para que serve:} recombinar informação mod vários primos; acelerar cálculos grandes; problemas de relógios com vários períodos coprimos.
+
+\begin{exemplodiabox}
+Você sabe que um número deixa resto 2 ao dividir por 3, resto 3 ao dividir por 5 e resto 2 ao dividir por 7. O CRT monta \textbf{um único} número que satisfaz tudo ao mesmo tempo (aqui, 23 funciona entre outros equivalentes). Aparece quando a prova dá vários restos com módulos \textbf{sem fator em comum} e pede o menor inteiro positivo que resolve o sistema.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=59,lastline=62]{formulas_teoria/numeros.cpp}
 
@@ -157,6 +227,11 @@ Vários restos $x \equiv a_i \pmod{m_i}$ com $\mdc(m_i,m_j)=1$ têm solução ú
 \textbf{Exponenciação rápida:} $a^b \bmod m$ em $O(\log b)$.
 
 \emph{Para que serve:} crivo pré-processa primos até $10^7$ em muitas plataformas; fatoração por tentativa até $\sqrt{n}$ resolve $n \le 10^{12}$ em um teste; \texttt{binpow} é obrigatório em quase todo problema modular com expoente grande.
+
+\begin{exemplodiabox}
+Antes de mil perguntas ``$n$ é primo?'', você roda o crivo uma vez e marca todos os primos até um milhão. Para um único $n$ grande, testa divisores até $\sqrt{n}$: se $360 = 2^3 \cdot 3^2 \cdot 5$, você descobriu os fatores. A exponenciação rápida é o botão de ``potência mod'' quando o expoente tem dezenas de dígitos --- sem ela, o programa trava.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=65,lastline=73]{formulas_teoria/numeros.cpp}
 
@@ -172,6 +247,11 @@ $a_n = a_1 + (n-1)r$, \quad $S_n = \dfrac{(a_1 + a_n)n}{2}$.
 
 \emph{Para que serve:} soma de números consecutivos, custo acumulado com incremento fixo, análise de loops com passo constante, problemas de ``pedras em fila''.
 
+\begin{exemplodiabox}
+Somar $1 + 2 + 3 + \cdots + 100$ na mão é chato; na PA, o primeiro é 1, o último é 100, são 100 termos: $S = (1+100)\cdot 100 / 2 = 5050$. Use quando os valores \textbf{sobem de igual em igual} (dia 1 ganha 10 pontos, dia 2 ganha 20, dia 3 ganha 30\ldots) ou quando o enunciado fala em fila com passo fixo.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=5,lastline=13]{formulas_teoria/somas.cpp}
 
 \subsection{Progressão geométrica (PG)}
@@ -180,21 +260,34 @@ $S_n = a_1 \cdot \dfrac{q^n - 1}{q - 1}$ ($q \neq 1$).
 
 \emph{Para que serve:} somar potências $1 + q + q^2 + \cdots$, modelos que dobram a cada passo, séries em análise de divide-and-conquer.
 
+\begin{exemplodiabox}
+Uma bactéria dobra a cada hora: 1, 2, 4, 8, 16\ldots Quantas bactérias no total após 10 horas (somando todas as gerações)? É PG com razão 2. Também aparece em ``cada escolha abre duas novas opções'' e em somar $1 + 2 + 4 + \cdots + 2^n$ sem loop longo.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=22,lastline=25]{formulas_teoria/somas.cpp}
 
 \subsection{Somas clássicas}
 
+Atalhos para somar sem \texttt{for} quando $n$ é grande: veja \emph{o que} se repete em cada termo e use a linha certa.
+
 \begin{align}
-  \sum_{i=1}^{n} i &= \frac{n(n+1)}{2} &
-  &\text{(trabalho total de um loop simples)} \\
+  1 + 2 + \cdots + n &= \frac{n(n+1)}{2} &
+  &\text{($n{=}4$: soma $10$)} \\
   \sum_{i=1}^{n} i^2 &= \frac{n(n+1)(2n+1)}{6} &
-  &\text{(quadrados, volumes discretos)} \\
+  &\text{(cada termo é $i^2$, não $i$)} \\
   \sum_{i=1}^{n} i^3 &= \left(\frac{n(n+1)}{2}\right)^2 &
-  &\text{(ligada à soma dos $i$)} \\
+  &\text{(quadrado da linha de cima)} \\
   \sum_{i=0}^{n} 2^i &= 2^{n+1} - 1 &
-  &\text{(todos os subconjuntos, árvore binária cheia)}
+  &\text{(1, 2, 4, 8\ldots dobra)}
 \end{align}
-\emph{Para que serve:} responder perguntas do tipo ``quantas operações no pior caso'' ou somar séries sem loop $O(n)$ quando $n$ é enorme.
+
+\emph{Para que serve:} contar operações de loops ou responder somas fechadas em $O(1)$.
+
+\begin{exemplodiabox}
+O caso mais comum: \texttt{for (i=1..n) for (j=1..i)} roda $1+2+\cdots+n = n(n+1)/2$ vezes --- por isso fala-se em ``$n^2/2$'', não $n^2$ cheio. Já $1+2+4+\cdots$ aparece quando algo dobra a cada passo (ou ao contar subconjuntos: cada elemento entra ou não).
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=28,lastline=46]{formulas_teoria/somas.cpp}
 
@@ -213,6 +306,11 @@ Quase tudo usa \textbf{inteiro} (produto vetorial) para evitar erro de ponto flu
 \end{align}
 \emph{Para que serve:} \textbf{escalar} $\Rightarrow$ ângulo reto se $=0$, projeção; \textbf{vetorial} $\Rightarrow$ orientação (esquerda/direita), área, ponto dentro de polígono convexo, interseção de segmentos.
 
+\begin{exemplodiabox}
+Três pontos no mapa: você quer saber se ao ir de A para B e depois para C você ``virou à esquerda'' ou à direita. O produto vetorial (em 2D vira um número só) diz o lado da curva. Produto escalar zero significa que dois caminhos formam canto reto (como esquina de quadra). Em prova: ``sentido horário?'', ``ponto dentro do triângulo?'' --- quase sempre produto vetorial.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=9,lastline=16]{formulas_teoria/geometria.cpp}
 
 \subsection{Distância e ângulo}
@@ -220,6 +318,11 @@ Quase tudo usa \textbf{inteiro} (produto vetorial) para evitar erro de ponto flu
 $d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$, \quad $\cos\theta = \dfrac{\vec{u}\cdot\vec{v}}{\|\vec{u}\|\,\|\vec{v}\|}$.
 
 \emph{Para que serve:} vizinho mais próximo, raio de cobertura, comparar ângulos sem \texttt{acos} (compare quadrados ou use produto escalar com sinal).
+
+\begin{exemplodiabox}
+Qual das duas lojas está mais perto de você no mapa com coordenadas? Compare distâncias (muitas vezes compare o \textbf{quadrado} da distância e evite raiz). Para saber se duas ruas fazem um ângulo ``mais aberto'' que outras, dá para comparar usando produto escalar sem calcular graus com calculadora.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=19,lastline=26]{formulas_teoria/geometria.cpp}
 
@@ -231,6 +334,11 @@ Polígono (shoelace): $\frac{1}{2}|\sum (x_i y_{i+1} - x_{i+1} y_i)|$.
 
 \emph{Para que serve:} área de terreno, polígono convexo, verificar se três pontos estão colineares (área $=0$), integrais discretas no plano.
 
+\begin{exemplodiabox}
+Três postes no terreno formam um triângulo: a área pelo produto vetorial diz se o terreno ``fecha'' direito. Se três cidades ficam na mesma reta, a área do triângulo é zero --- os pontos são colineares. Para um lote com muitos vértices (polígono), o shoelace soma as contribuições de cada aresta e dá a área total sem dividir em triângulos na mão.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=29,lastline=47]{formulas_teoria/geometria.cpp}
 
 \subsection{Retas, semiplanos e interseção}
@@ -238,6 +346,11 @@ Polígono (shoelace): $\frac{1}{2}|\sum (x_i y_{i+1} - x_{i+1} y_i)|$.
 Distância de ponto à reta $Ax+By+C=0$: $|Ax_0+By_0+C|/\sqrt{A^2+B^2}$.
 
 \emph{Para que serve:} ponto mais perto de uma estrada, lado de uma reta (semiplano), colisão aproximada, convex hull e half-plane intersection.
+
+\begin{exemplodiabox}
+Sua casa está num ponto e a rodovia é uma reta no mapa: qual a distância mínima até a pista? A fórmula do ponto à reta responde. Também serve para ``está do lado esquerdo ou direito da cerca?'' --- metade do plano de cada lado da reta. Problemas de cerca, muralha ou faixa de segurança ao redor de uma linha usam essa ideia.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=51,lastline=53]{formulas_teoria/geometria.cpp}
 
@@ -251,11 +364,21 @@ Teoria que explica \textbf{por que} certos algoritmos existem e o que esperar de
 
 \emph{Para que serve:} checar se uma lista de graus é realizável; contar arestas a partir dos graus; provas de impossibilidade.
 
+\begin{exemplodiabox}
+Em uma festa, cada pessoa cumprimenta algumas outras (amizade mútua). Conte quantos cumprimentos \textbf{cada} pessoa deu e some tudo: cada cumprimento foi contado duas vezes (uma vez para cada lado), então o total de ``saídas'' é o dobro do número de pares de amizade. Se o enunciado lista ``grau'' de cada vértice e pede se um grafo assim pode existir, comece somando os graus.
+\end{exemplodiabox}
+
+
 \incluircpp[firstline=5,lastline=15]{formulas_teoria/grafos_probabilidade.cpp}
 
 \textbf{Euler planar:} $|V| - |E| + |F| = 2$.
 
 \emph{Para que serve:} mapas planares, limitar arestas em grafos desenhados no plano; contexto teórico de faces em subdivisões.
+
+\begin{exemplodiabox}
+Um mapa de países no papel: cada país é um vértice, fronteira compartilhada é aresta. Vértices, arestas e ``regiões'' (incluindo o exterior) obedecem $V - E + F = 2$. É mais teoria do que implementação, mas explica por que grafos ``muito emaranhados'' no plano não podem ter arestas demais sem se cruzar.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=18,lastline=20]{formulas_teoria/grafos_probabilidade.cpp}
 
@@ -266,6 +389,17 @@ Teoria que explica \textbf{por que} certos algoritmos existem e o que esperar de
   \item \textbf{Fluxo:} máximo fluxo s--t (Edmonds--Karp, Dinic).
 \end{itemize}
 Templates em \texttt{codigos/algoritmos\_avulsos/grafos/}.
+
+\begin{exemplodiabox}
+\textbf{Caminho mínimo:} GPS entre cidades (pesos $\ge 0$) --- Dijkstra.
+
+\textbf{Árvore mínima:} ligar todas as cidades com custo mínimo, sem ciclo --- Kruskal/Prim.
+
+\textbf{Fluxo:} máximo que passa de $s$ a $t$ sem estourar capacidade das arestas.
+
+Se o texto fala em ``menor custo A--B'', ``conectar tudo barato'' ou ``máximo enviado'', olhe essa lista primeiro.
+\end{exemplodiabox}
+
 
 %==============================================================================
 \section{Probabilidade e esperança (noções)}
@@ -278,9 +412,19 @@ quando $X$ é soma de variáveis indicadoras (0/1).
 
 \emph{Para que serve:} contar ``quantos pares esperados'' sem listar tudo; simplificar esperança de processos aleatórios; provar que em média um algoritmo aleatório é bom.
 
+\begin{exemplodiabox}
+Em $n$ pessoas, quantos \textbf{pares de cumprimentos} você espera se cada par cumprimenta com probabilidade $p$? Em vez de listar todos os pares, some: para cada par, probabilidade $p$ de acontecer; há $\binom{n}{2}$ pares, então a média é $p \cdot \binom{n}{2}$. A esperança de indicadores transforma ``contar coisas com sorte'' em soma de probabilidades simples.
+\end{exemplodiabox}
+
+
 \textbf{Markov:} $\mathbb{P}(X \ge t) \le \mathbb{E}[X]/t$ para $X \ge 0$.
 
 \emph{Para que serve:} limitar probabilidade de evento raro quando só se conhece a média; análise de algoritmos com cotas fracas.
+
+\begin{exemplodiabox}
+Em média, uma fila processa 5 pessoas por hora. Markov diz: a chance de processar \textbf{20 ou mais} numa hora não pode ser enorme --- está limitada pela média. Você não precisa da distribuição exata; só da média para dizer ``isso é raro demais para acontecer sempre''.
+\end{exemplodiabox}
+
 
 \incluircpp[firstline=24,lastline=31]{formulas_teoria/grafos_probabilidade.cpp}
 
@@ -310,6 +454,11 @@ Notação $O(f(n))$: crescimento no pior caso (ordem de magnitude).
 
 \textbf{Regra prática:} $\sim 10^8$ operações simples por segundo. Se $n = 10^6$, $O(n^2)$ estoura; prefira $O(n\log n)$ ou $O(n)$.
 
+\begin{exemplodiabox}
+Imagine comparar \textbf{cada} aluno com \textbf{cada} outro: com 1000 alunos são cerca de 500 mil comparações --- ok. Com 100 mil alunos vira 5 bilhões --- o juiz online corta. Antes de codar, pergunte: ``meu $n$ pode ser $10^5$? Então não posso ter dois loops $n \times n$.'' É como escolher a ferramenta certa: colher de jardim para 10 plantas; não para um milhão de hectares.
+\end{exemplodiabox}
+
+
 %==============================================================================
 \section{Lógica de modelagem}
 %==============================================================================
@@ -324,6 +473,18 @@ Ferramentas para transformar enunciado em algoritmo.
   \item \textbf{Bijeção:} contar de dois jeitos o mesmo conjunto. \emph{Serve para:} provas combinatórias e simplificar fórmula final.
 \end{itemize}
 
-\section*{Leitura complementar}
+\begin{exemplodiabox}
+\textbf{Invariante:} em um jogo só trocam duas peças de lugar; a paridade não muda --- certas configurações finais são \textbf{impossíveis}.
 
-\href{https://cp-algorithms.com/}{CP-Algorithms}, \href{https://usaco.guide/}{USACO Guide} e os capítulos com código desta apostila (\texttt{algoritmos\_avulsos/}).
+\textbf{Monotonicidade:} com mais máquinas, o lucro máximo só aumenta --- dá para testar um $K$ no meio com busca binária.
+
+\textbf{DP:} o melhor caminho A--C passa por algum B; o trecho A--B já faz parte da solução ótima.
+
+\textbf{Casos extremos:} teste $n=1$ antes de enviar.
+
+\textbf{Bijeção:} contar caminhos na grade de dois jeitos (direita/cima \emph{e} sequência de passos).
+\end{exemplodiabox}
+
+
+\medskip
+\noindent\textbf{Dica geral:} leia o enunciado em voz alta como história (``distribuir'', ``menor caminho'', ``de quantas formas''). A palavra-chave costuma apontar para a caixa deste capítulo; o código em C++ vem depois, quando a ideia já estiver clara.
