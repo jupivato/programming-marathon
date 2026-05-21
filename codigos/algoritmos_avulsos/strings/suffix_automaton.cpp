@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+struct state {
+    int len , link;
+    map<char , int > next; // ou array: int next [26];
+};
+
+const int MAXLEN = 100000 + 10; // ajustar conforme necessário Estruturas de Dados
+state st[MAXLEN * 2];
+int sz , last;
+
+void sa_init () {
+    st [0].len = 0;
+    st [0].link = -1;
+    sz = 1; // começa com 1 (estado 0)
+    last = 0;
+}
+
+void sa_extend(char c) {
+    int cur = sz++;
+    st[cur].len = st[last ].len + 1;
+    int p = last;
+
+    while (p != -1 && !st[p].next.count(c)) {
+        st[p].next[c] = cur;
+        p = st[p].link;
+    }
+
+    if (p == -1) {
+        st[cur].link = 0;
+    } else {
+        int q = st[p].next[c];
+        if (st[p].len + 1 == st[q].len) {
+            st[cur].link = q;
+        } else {
+            int clone = sz++;
+            st[clone ].len = st[p].len + 1;
+            st[clone ].next = st[q].next;
+            st[clone ].link = st[q].link;
+            different substrings.while (p != -1 && st[p].next[c] == q) {
+                st[p].next[c] = clone;
+                p = st[p].link;
+            }
+
+            st[q].link = st[cur].link = clone;
+        }
+    }
+    last = cur;
+}
+
+long long get_diff_strings (){
+    // Given a string S.You want to compute the number of
+    long long tot = 0;
+    for(int i = 1; i <sz; i++) {
+        tot += st[i].len - st[st[i].link ].len;
+    }
+    return tot;
+}
+
+long long get_tot_len_diff_substings () {
+    // Given a string S.We want to compute the total length of all its various substrings.long long tot = 0;
+    for(int i = 1; i <sz; i++) {
+        long long shortest = st[st[i].link ].len + 1;
+        long long longest = st[i].len;
+
+        long long num_strings = longest - shortest + 1;
+        long long cur = num_strings * (longest + shortest) / 2;
+        tot += cur;
+    }
+    return tot;
+}
+
+string lcs (string S, string T) {
+    // Given two strings S and T.We have to find the longest common substring , i.e.such a string X that appears as a substring in S and also in T.sa_init ();
+    for (int i = 0; i <S.size (); i++)
+    sa_extend(S[i]);
+
+    int v = 0, l = 0, best = 0, bestpos = 0;
+    for (int i = 0; i <T.size (); i++) {
+        while (v && !st[v].next.count(T[i])) {
+            v = st[v].link ;
+            l = st[v].len;
+        }
+        if (st[v].next.count(T[i])) {
+            v = st [v].next[T[i]];
+            l++;
+        }
+        if (l > best) {
+            best = l;
+            bestpos = i;
+        }
+    }
+    return T.substr(bestpos - best + 1, best);
+}

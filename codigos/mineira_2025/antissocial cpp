@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+int main() 
+{
+  int N; 
+    cin >> N;
+  vector<int> res(N + 1);
+
+  res[1] = 1;
+  if (N == 1) 
+  { 
+    cout << 1 << endl;
+    return 0; 
+  }
+
+  res[N] = 2;
+  
+  // vai ordenar pela maior distancia e fazer o desempate automático
+  priority_queue<vector<int>> pq;
+  
+  // vector = {distancia, -posição, left, right} - tem que ser -pos pra ele fazer o desempate correto
+  if (N > 2) pq.push({(N - 1) / 2, -((1 + N) / 2), 1, N});
+
+  for (int i = 3; i <= N; ++i) 
+  {
+    vector<int>topo = pq.top(); 
+    pq.pop();
+    int pos = -topo[1]; // posição
+    int L = topo[2], R = topo[3];
+
+    res[pos] = i;
+
+    // adiciona os novos intervalos
+    if (pos - L > 1) pq.push({(pos - L) / 2, -((L + pos) / 2), L, pos});
+    if (R - pos > 1) pq.push({(R - pos) / 2, -((pos + R) / 2), pos, R});
+  }
+
+  for (int i = 1; i <= N; ++i) cout << res[i] << (i == N ? "" : " ");
+  return 0;
+}

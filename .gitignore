@@ -1,0 +1,12 @@
+# Repositórios e clones locais
+git/
+
+# Scripts auxiliares locais
+scripts/
+
+# Backup da extração bruta dos PDFs
+codigos/algoritmos_avulsos/_originais_flat/
+
+# Artefatos de compilação LaTeX (apostila)
+apostila/build/
+apostila/*.pdf
