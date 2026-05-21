@@ -1,0 +1,195 @@
+\chapter{C++ útil para maratona}
+
+Este capítulo é o ``kit de ferramentas'' do C++ competitivo: tipos e macros que todo mundo cola no topo, estruturas prontas da STL, funções de \texttt{<algorithm>} e o jeito certo de ordenar \texttt{pair}, \texttt{tupla} e structs.
+Para cada tópico: \textbf{o que é}, \textbf{quando usar} na prova, um \textbf{exemplo em linguagem simples} (\texttt{exemplodiabox}) e trechos em \texttt{codigos/cpp\_utilitarios/}.
+
+%==============================================================================
+\section{Template, tipos e macros}
+%==============================================================================
+
+No começo do arquivo você define \textbf{atalhos} para não repetir \texttt{long long} e \texttt{vector<int>} o tempo todo, além de constantes como \texttt{INF} e \texttt{MOD}.
+Em maratona o padrão é \texttt{\#include <bits/stdc++.h>} e \texttt{using namespace std;} (aceito nos juízes brasileiros mais comuns).
+
+\emph{Para que serve:} evitar overflow (\texttt{ll} em somas e produtos), nomear arestas como \texttt{pii}, percorrer com \texttt{all(v)} e \texttt{sz(v)}.
+
+\begin{exemplodiabox}
+Você vai somar até $10^6$ números de até $10^9$ cada. Em \texttt{int} estoura; em \texttt{long long} cabe. Os \texttt{typedef} não mudam o compilador --- só deixam o código mais curto para ler na pressão da prova. Macros como \texttt{pb} e \texttt{mp} são opcionais: use se já estiver acostumada, senão \texttt{push\_back} e \texttt{make\_pair} funcionam igual.
+\end{exemplodiabox}
+
+\incluircpp[firstline=4,lastline=24]{cpp_utilitarios/template_tipos.cpp}
+
+%==============================================================================
+\section{Entrada e saída rápidas}
+%==============================================================================
+
+\textbf{IO rápido} (\texttt{ios::sync\_with\_stdio(false)} e \texttt{cin.tie(nullptr)}) acelera leitura em problemas com muito dado.
+\textbf{Precisão} com \texttt{fixed} e \texttt{setprecision} é obrigatória em geometria.
+\textbf{\texttt{getline}} lê linha inteira --- útil depois de misturar \texttt{cin >>} com texto.
+
+\emph{Para que serve:} não levar TLE só por IO; imprimir ângulos e distâncias com casas decimais corretas.
+
+\begin{exemplodiabox}
+O juiz manda $10^5$ inteiros na entrada. Sem desligar a sincronização do \texttt{cin} com o \texttt{stdio}, seu código pode ficar lento mesmo com algoritmo linear. Depois de ler um número com \texttt{cin >> n}, se precisar ler uma frase inteira na linha seguinte, use \texttt{getline} --- ou consuma o \texttt{'\textbackslash n'} que ficou no buffer.
+\end{exemplodiabox}
+
+\incluircpp[firstline=5,lastline=24]{cpp_utilitarios/entrada_saida.cpp}
+
+%==============================================================================
+\section{\texttt{vector} e \texttt{deque}}
+%==============================================================================
+
+\texttt{vector} é o ``array dinâmico'' padrão: \texttt{push\_back}, \texttt{pop\_back}, \texttt{resize}, índice \texttt{O(1)}.
+\texttt{deque} permite inserir e apagar nas \textbf{duas pontas} em tempo constante --- filas com operações nas duas extremidades, BFS com camadas, etc.
+
+\emph{Para que serve:} lista de adjacência, DP em vetor, fila de eventos; \texttt{deque} quando precisa de \texttt{push\_front}.
+
+\begin{exemplodiabox}
+Guardar os vizinhos de cada vértice do grafo: um \texttt{vector} de listas, \texttt{vector<vector<int>> adj(n)}. Percorrer com índice clássico ou com \texttt{for (int x : adj[u])}. Se o problema simula uma fila em que elementos entram e saem dos dois lados (janela deslizante nas pontas), \texttt{deque} costuma ser melhor que \texttt{vector}.
+\end{exemplodiabox}
+
+\incluircpp[firstline=5,lastline=28]{cpp_utilitarios/vetor_deque.cpp}
+
+%==============================================================================
+\section{\texttt{pair}, \texttt{tuple} e desempacotar}
+%==============================================================================
+
+\textbf{\texttt{pair}} guarda dois valores (\texttt{.first}, \texttt{.second}). Ao dar \texttt{sort} em um vetor de pares, a ordem é lexicográfica: compara o primeiro campo; se empatar, o segundo.
+\textbf{\texttt{tuple}} generaliza para 3 ou mais campos; acesse com \texttt{get<0>(t)}, \texttt{get<1>(t)}, etc. (o índice é \textbf{fixo em tempo de compilação}).
+
+\textbf{\texttt{tie}} e \textbf{structured bindings} (\texttt{auto [x, y] = p;}) evitam escrever \texttt{p.first} toda hora.
+\textbf{\texttt{map<pair<...>, ...>}} usa a ordem lexicográfica do par como chave.
+
+\emph{Para que serve:} arestas ponderadas \texttt{(u, v)}, ordenar por distância e vértice no Dijkstra, retornar dois valores de uma função, chave composta em mapas.
+
+\begin{exemplodiabox}
+Lista de arestas \texttt{(peso, destino)} para Kruskal: você ordena pelo peso --- o \texttt{sort} em \texttt{pair} compara \texttt{.first} automaticamente. Se precisar de três informações (tempo, sala, nome), use \texttt{tuple} ou uma \texttt{struct}. Para trocar os valores de um par sem criar variável temporária: \texttt{tie(a, b) = make\_pair(b, a);} (com cuidado em tipos).
+\end{exemplodiabox}
+
+\incluircpp[firstline=5,lastline=28]{cpp_utilitarios/pair_tupla.cpp}
+
+%==============================================================================
+\section{\texttt{set}, \texttt{multiset}, \texttt{map} e \texttt{unordered\_*}}
+%==============================================================================
+
+\begin{itemize}[nosep]
+  \item \texttt{set} / \texttt{map}: elementos (ou chaves) \textbf{únicos}, ordenados; operações em $O(\log n)$.
+  \item \texttt{multiset}: como \texttt{set}, mas \textbf{permite repetidos}; \texttt{erase(it)} apaga uma cópia.
+  \item \texttt{unordered\_set} / \texttt{unordered\_map}: em média $O(1)$, \textbf{sem ordem}; bom para frequência com $n$ grande.
+\end{itemize}
+
+\texttt{lower\_bound} em \texttt{set} devolve o primeiro elemento $\geq$ ao valor (iterator).
+
+\emph{Para que serve:} conjunto de posições ativas, contagem de frequência, coordenada comprimida, ``já visitei este estado?''.
+
+\begin{exemplodiabox}
+Contar quantas vezes cada palavra aparece: \texttt{map<string, int>} e \texttt{freq[w]++}. Verificar se um número já foi usado sem ordenar um vetor gigante: \texttt{set<int>}. Se só precisa de contagem e não precisa percorrer em ordem, \texttt{unordered\_map} é mais rápido na prática. Em \texttt{multiset}, apagar \textbf{um} 5: \texttt{ms.erase(ms.find(5));} --- \texttt{ms.erase(5)} apaga \emph{todos} os 5.
+\end{exemplodiabox}
+
+\incluircpp[firstline=5,lastline=33]{cpp_utilitarios/conjuntos_mapas.cpp}
+
+%==============================================================================
+\section{\texttt{stack}, \texttt{queue} e \texttt{priority\_queue}}
+%==============================================================================
+
+\texttt{stack} e \texttt{queue} da STL são adaptadores: \texttt{push}, \texttt{pop}, \texttt{top}/\texttt{front}.
+\textbf{\texttt{priority\_queue}} é um \textbf{heap}: por padrão o topo é o \textbf{maior} elemento (max-heap).
+
+Para \textbf{min-heap}, declare\\
+\texttt{priority\_queue<int, vector<int>, greater<int>>}.
+
+Com \texttt{pair}, use \texttt{greater<pair<int,int>>} para priorizar menor distância (Dijkstra).
+
+\emph{Para que serve:} DFS com pilha, BFS com fila, fila de prioridade em grafos e greedy.
+
+\begin{exemplodiabox}
+Dijkstra: fila de \texttt{(distância, vértice)}; sempre processa o menor \texttt{dist} ainda na fila --- \texttt{priority\_queue} com \texttt{greater} no primeiro campo do par. Monotonia de pilha em vetor? \texttt{stack}. Processar camadas de um grafo? \texttt{queue}.
+\end{exemplodiabox}
+
+\incluircpp[firstline=5,lastline=35]{cpp_utilitarios/filas_pilhas_heap.cpp}
+
+%==============================================================================
+\section{Algoritmos prontos (\texttt{<algorithm>})}
+%==============================================================================
+
+Funções que o compilador já implementou de forma eficiente --- use em vez de reinventar.
+
+\subsection{Ordenar, reverter e tirar duplicatas}
+
+\texttt{sort}, \texttt{reverse}; depois de ordenar, \texttt{unique} + \texttt{erase} remove duplicatas consecutivas.
+
+\incluircpp[firstline=5,lastline=14]{cpp_utilitarios/algoritmos_stl.cpp}
+
+\subsection{Busca binária na STL}
+
+O vetor \textbf{precisa estar ordenado}. \texttt{binary\_search} responde sim/não; \texttt{lower\_bound} e \texttt{upper\_bound} devolvem iteradores --- a diferença conta quantos elementos iguais a $x$ existem.
+
+\incluircpp[firstline=16,lastline=21]{cpp_utilitarios/algoritmos_stl.cpp}
+
+\subsection{\texttt{min}, \texttt{max}, \texttt{gcd}, somas e permutações}
+
+\texttt{min\_element} / \texttt{max\_element} em um intervalo; \texttt{gcd} (C++17) em \texttt{<numeric>}; \texttt{accumulate} soma um trecho; \texttt{next\_permutation} gera a próxima permutação lexicográfica (força bruta em $n \le 8$--$10$).
+
+\incluircpp[firstline=23,lastline=41]{cpp_utilitarios/algoritmos_stl.cpp}
+
+\begin{exemplodiabox}
+\textbf{Busca binária:} vetor ordenado de notas; ``existe nota 7?'' --- \texttt{binary\_search}. ``Quantos 7 existem?'' --- \texttt{upper\_bound - lower\_bound}. \textbf{Permutações:} gerar todas as ordens de 8 letras com \texttt{sort} + loop em \texttt{next\_permutation}. \textbf{GCD:} simplificar fração $\frac{a}{b}$ dividindo numerador e denominador por \texttt{gcd(a,b)}.
+\end{exemplodiabox}
+
+%==============================================================================
+\section{Ordenar structs, lambdas e \texttt{auto}}
+%==============================================================================
+
+O \texttt{sort} padrão só funciona direto em tipos com \texttt{operator<} ou em \texttt{pair}/\texttt{tuple}.
+Para \texttt{struct}, passe uma \textbf{função de comparação} ou uma \textbf{lambda} como terceiro argumento de \texttt{sort}.
+
+\texttt{auto} deixa o compilador deduzir o tipo --- comum em iteradores (\texttt{auto it = v.begin();}).
+
+\emph{Para que serve:} ordenar eventos por tempo e desempate por id; ordenar arestas só pelo peso; \texttt{set} com ordem diferente da lexicográfica do par.
+
+\begin{exemplodiabox}
+Prova com consultas ordenadas por dia: struct \texttt{Evento\{t, id\}}; função \texttt{cmp} que compara \texttt{t} e depois \texttt{id}. Para ordenar só pelo peso da aresta sem mudar o par, lambda: \texttt{[](auto\& a, auto\& b)\{ return a.first < b.first; \}}. \texttt{auto} evita escrever \texttt{vector<pair<int,int>>::iterator}.
+\end{exemplodiabox}
+
+\incluircpp[firstline=4,lastline=32]{cpp_utilitarios/comparadores_lambdas.cpp}
+
+%==============================================================================
+\section{\texttt{string}, \texttt{stringstream} e \texttt{bitset}}
+%==============================================================================
+
+\texttt{string} se comporta como vetor de caracteres; \texttt{substr}, \texttt{reverse}.
+\texttt{stringstream} separa números de uma linha lida de uma vez.
+\texttt{bitset<N>} manipula máscaras de bits fixas (DP com bitmask, testar bit $i$, contar bits).
+
+Extensões GCC úteis em prova: \texttt{\_\_builtin\_popcount(x)} conta bits 1 em \texttt{int}.
+
+\emph{Para que serve:} parsing de entrada, substrings, estados com máscara ($N \le 20$--$22$ em muitos problemas).
+
+\begin{exemplodiabox}
+Entrada: uma linha com vários inteiros --- \texttt{getline} + \texttt{stringstream}. Subset de $\{0,\ldots,19\}$: representar conjunto como inteiro de 20 bits; testar se item $i$ está no conjunto com \texttt{mask \& (1<<i)}. \texttt{bitset} deixa o código mais legível que só inteiros quando $N$ é pequeno e fixo.
+\end{exemplodiabox}
+
+\incluircpp[firstline=5,lastline=30]{cpp_utilitarios/strings_bitset.cpp}
+
+%==============================================================================
+\section{Resumo: o que usar em cada situação}
+%==============================================================================
+
+\begin{center}
+\small
+\begin{tabular}{@{}lll@{}}
+  \toprule
+  \textbf{Preciso de...} & \textbf{Estrutura / função} & \textbf{Complexidade típica} \\
+  \midrule
+  Lista dinâmica, grafo & \texttt{vector} & push amort. $O(1)$ \\
+  Fila com duas pontas & \texttt{deque} & $O(1)$ nas pontas \\
+  Par ordenado, aresta & \texttt{pair}, \texttt{tuple} & sort: $O(n\log n)$ \\
+  Únicos / ordenado & \texttt{set}, \texttt{map} & $O(\log n)$ \\
+  Frequência rápida & \texttt{unordered\_map} & $O(1)$ médio \\
+  Próximo menor custo & \texttt{priority\_queue} + \texttt{greater} & push/pop $O(\log n)$ \\
+  Busca em vetor ordenado & \texttt{lower\_bound}, etc. & $O(\log n)$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\medskip
+\noindent\textbf{Dica geral:} monte o template uma vez, decore onde está cada ferramenta neste capítulo e, na prova, escolha a estrutura pelo \emph{tipo de pergunta} (contar, ordenar, mínimo repetido, caminho mínimo) --- o C++ da STL já resolve a parte mecânica; o raciocínio continua sendo o do capítulo de fundamentos teóricos.
