@@ -36,4 +36,4 @@ int maxSumSubmatrix(const vector<vector<int>>& mat, int k)
         }
     }
     return maxSum;
-} (inserção, remoção ou substituição de caracteres) necessárias para transformar uma string na outra.
+}
