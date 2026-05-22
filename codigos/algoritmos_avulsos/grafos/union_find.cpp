@@ -1,56 +1,38 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-const int N_MAX = 100001;
-int link[N_MAX ];
-int size[N_MAX ];
+// Union-Find (DSU) - Disjoint Set Union
+// Mandar: n = numero de elementos, link[] e sz[] são gerenciados aqui
 
-// Função para encontrar o representante do conjunto
+vector<int> link, sz;
+
+// inicializa union-find para n elementos
+void init_uf(int n) {
+    link.assign(n, 0);
+    sz.assign(n, 1);
+    iota(link.begin(), link.end(), 0); // link[i] = i
+}
+
+// encontra representante do conjunto contendo x com compressao de caminho
 int find(int x) {
-    return (x == link[x]) ? x : (link[x] = find(link[x]));
+    if (x != link[x]) link[x] = find(link[x]);
+    return link[x];
 }
 
-// Função para verificar se dois elementos estão no mesmo conjunto
-bool same(int x, int y) {
-    return find(x) == find(y);
-}
-
-// Função para unir dois conjuntos
-void unite(int a, int b) {
+// une dois conjuntos, retorna true se foram unidos (false se já estavam)
+bool unite(int a, int b) {
     a = find(a);
     b = find(b);
-    if (a == b) return;
-    if (size[a] <size[b]) swap(a, b);
-    size[a] += size[b];
+    if (a == b) return false; // ja estao no mesmo conjunto
+    
+    // une por tamanho: coloca o menor sob o maior
+    if (sz[a] < sz[b]) swap(a, b);
     link[b] = a;
-}
-// exemplo na main
-int main () {
-
-    int N, K, i, x1 , x2;
-    char op;
-
-    cin>> N>> K;
-
-    // Inicialização da estrutura DSU
-    for (i = 0; i <N; ++i) {
-        link[i] = i;
-        size[i] = 1;
-    }
-
-    for (i = 0; i <K; ++i) {
-        cin>> op>> x1>> x2;
-        if (op == ’C’) {
-            if (same(x1 , x2)) {
-                cout <<"S" <<’\n’;
-            } else {
-                cout <<"N" <<’\n’;
-            }
-        } else { // ’U’
-        if(! same(x1 , x2))unite(x1 , x2);
-    }
+    sz[a] += sz[b];
+    return true;
 }
 
-return 0;
+// verifica se dois elementos estao no mesmo conjunto
+bool same(int a, int b) {
+    return find(a) == find(b);
 }

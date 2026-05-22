@@ -1,42 +1,36 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int n;
-vector<vector<double>> adj; // MATRIZ de adjacência do grafo ( nxn)
-const double INF = 1000000000.0;
+const long long INF = 1e18;
 
-struct Edge {
-    double w = INF;
-    int to = -1;
-};
-
-double prim () {
-    double total_weight = 0;
-    vector<bool > selected(n, false);
-    vector<Edge > min_e(n);
-    min_e [0].w = 0;
-
-    for (int i = 0; i <n; ++i) {
-        int v = -1;
-        for (int j = 0; j <n; ++j) {
-            if (! selected[j] && (v == -1 || min_e[j].w <min_e[ v].w))
-            v = j;
-        }
-
-        /*if (min_e[v].w == INF) {
-            cout <<"No MST!" <<endl;
-            exit (0);
-        }*/
-        selected[v] = true;
-        total_weight += min_e[v].w;
-        /*if (min_e[v].to != -1)
-        cout <<v <<" " <<min_e[v].to <<endl;*/
-
-        for (int to = 0; to <n; ++to) {
-            if (adj[v][to] <min_e[to].w)
-            min_e[to] = {adj[v][to], v};
+// Prim para encontrar arvore geradora minima
+// Parametros: 
+//   - n = numero de vertices
+//   - adj = lista adjacencia onde adj[u] = {(vizinho, peso), ...}
+// Retorna: peso total da MST
+long long prim(int n, const vector<vector<pair<int, long long>>>& adj) {
+    vector<bool> visited(n, false);
+    priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<>> pq;
+    
+    long long total_weight = 0;
+    pq.push({0, 0}); // começa pelo vertice 0 com peso 0
+    
+    while (!pq.empty()) {
+        auto [w, u] = pq.top();
+        pq.pop();
+        
+        if (visited[u]) continue; // ja foi adicionada
+        
+        visited[u] = true; // adiciona u a arvore
+        total_weight += w;
+        
+        // explora todas as arestas de u nao visitadas
+        for (auto [v, weight] : adj[u]) {
+            if (!visited[v]) {
+                pq.push({weight, v});
+            }
         }
     }
-
+    
     return total_weight;
 }

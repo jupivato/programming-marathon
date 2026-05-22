@@ -1,72 +1,57 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-// Estrutura para representar uma aresta ponderada
 struct Aresta {
-    int u, v, peso;
-
-    // Operador para permitir a ordenação das arestas pelo peso
-    bool operator <( const Aresta& other) const {
-        return peso <other.peso;
+    int u, v;
+    long long peso;
+    bool operator<(const Aresta& other) const {
+        return peso < other.peso;
     }
 };
 
-// --- Estrutura Union -Find (DSU) ---
-vector<int > pai;
-vector<int > tamanho;
+// Union-Find global para Kruskal
+vector<int> uf_link, uf_sz;
 
-// Encontra o representante do conjunto de ’i’ com compressão de caminho
-int find(int i) {
-    if (pai[i] == i) {
-        return i;
-    }
-    return pai[i] = find(pai[i]);
+// inicializa union-find
+void init_uf(int n) {
+    uf_link.assign(n, 0);
+    uf_sz.assign(n, 1);
+    iota(uf_link.begin(), uf_link.end(), 0);
 }
 
-// Une os conjuntos de ’a’ e ’b’ por tamanho
-void unite(int a, int b) {
+// encontra representante
+int find(int x) {
+    if (x != uf_link[x]) uf_link[x] = find(uf_link[x]);
+    return uf_link[x];
+}
+
+// une conjuntos
+bool unite(int a, int b) {
     a = find(a);
     b = find(b);
-    if (a != b) {
-        if (tamanho[a] <tamanho[b]) {
-            swap(a, b);
-        }
-        pai[b] = a;
-        tamanho[a] += tamanho[b];
-    }
+    if (a == b) return false;
+    if (uf_sz[a] < uf_sz[b]) swap(a, b);
+    uf_link[b] = a;
+    uf_sz[a] += uf_sz[b];
+    return true;
 }
-// --- Fim da Estrutura Union -Find ---
 
-
-// Função principal do Algoritmo de Kruskal
-long long kruskal(int n, vector<Aresta >& arestas) {
-    // Inicializa a estrutura Union -Find
-    pai.resize(n);
-    iota(pai.begin (), pai.end(), 0); // Preenche pai[i] = i
-    tamanho.assign(n, 1);
-
-    // 1.Ordena todas as arestas pelo peso
-    sort(arestas.begin (), arestas.end());
-
-    long long custo_total = 0;
-    vector<Aresta > mst_arestas;
-
-    // 2.Percorre as arestas ordenadas
-    for (const auto& aresta : arestas) {
-        // 3.Verifica se os vértices da aresta estão em componentes diferentes
-        if (find(aresta.u) != find(aresta.v)) {
-            // Se sim , a aresta não forma um ciclo
-            custo_total += aresta.peso;
-            mst_arestas.push_back(aresta);
-            unite(aresta.u, aresta.v);
+// Kruskal para encontrar arvore geradora minima
+// Parametros: n = numero de vertices, arestas = vetor de todas as arestas {u, v, peso}
+// Retorna: peso total da MST, ou -1 se grafo desconexo
+long long kruskal(int n, vector<Aresta>& arestas) {
+    sort(arestas.begin(), arestas.end()); // ordena por peso
+    
+    init_uf(n); // inicializa union-find
+    long long total = 0;
+    int arestas_adicionadas = 0;
+    
+    for (const auto& a : arestas) {
+        if (unite(a.u, a.v)) { // se conseguiu unir (nao fecha ciclo)
+            total += a.peso;
+            arestas_adicionadas++;
         }
     }
-
-    // Opcional: Verificar se uma MST foi formada (todos os vé rtices conectados)
-    // if (mst_arestas.size () != n - 1) {
-        // return -1; // Grafo não é conexo
-        // }
-
-        return custo_total;
-    }
+    
+    return (arestas_adicionadas == n - 1) ? total : -1; // -1 = desconexo
+}

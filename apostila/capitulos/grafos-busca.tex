@@ -1,0 +1,162 @@
+\chapter{Grafos I: Busca e exploração}
+
+Visitar todos os vértices de um grafo --- em largura (BFS) ou profundidade (DFS) --- é a base para detectar componentes, ordenar topologicamente, encontrar ciclos e muito mais.
+
+Este capítulo cobre os algoritmos fundamentais de travessia em grafos, com ênfase em \textbf{quando usar cada técnica} e \textbf{como implementar} em maratona.
+
+%==============================================================================
+\section{Conceitos básicos}
+%==============================================================================
+
+\subsection{O que é um grafo}
+
+Um \textbf{grafo} é um par $(V, E)$ onde $V$ é o conjunto de \textbf{vértices} (também chamados ``nós'') e $E$ é o conjunto de \textbf{arestas} (conexões entre vértices).
+
+\begin{itemize}[nosep]
+  \item \textbf{Dirigido:} arestas têm direção ($u \to v$ não é o mesmo que $v \to u$);
+  \item \textbf{Não-dirigido:} arestas são bidirecionais ($u - v$ é igual a $v - u$);
+  \item \textbf{Ponderado:} cada aresta tem um peso (custo, distância, etc.);
+  \item \textbf{Não-ponderado:} todas as arestas têm ``custo 1''.
+\end{itemize}
+
+\subsection{Representação: matriz vs lista de adjacência}
+
+\textbf{Matriz de adjacência:} \texttt{adj[u][v]} indica se existe aresta de $u$ para $v$.
+
+\begin{itemize}[nosep]
+  \item Bom quando: poucos vértices ($n \le 500$), grafo \textbf{denso} (muitas arestas);
+  \item Ruim quando: muitos vértices, grafo \textbf{esparso} (poucas arestas) --- usa $O(n^2)$ de memória.
+\end{itemize}
+
+\textbf{Lista de adjacência:} \texttt{adj[u]} é uma lista dos vértices vizinhos de $u$ (com pesos se ponderado).
+
+\begin{itemize}[nosep]
+  \item Bom quando: muitos vértices, grafo esparso --- usa $O(n + m)$ de memória;
+  \item Padrão em maratona para grafos grandes.
+\end{itemize}
+
+Em BFS e DFS que vêm a seguir, o código geralmente é \textbf{agnóstico}: tanto faz matriz ou lista, desde que você saiba iterar sobre os vizinhos.
+
+%==============================================================================
+\section{BFS --- Busca em largura}
+%==============================================================================
+
+\subsection{Conceito}
+
+\textbf{BFS} (Breadth-First Search) explora o grafo \textbf{por camadas}: começando de um vértice inicial, visita todos os vizinhos, depois os vizinhos dos vizinhos, e assim por diante.
+
+Implementação: use uma \texttt{queue} (fila FIFO). Marca o vértice como visitado \textbf{quando entra na fila}, não quando sai.
+
+Complexidade: $O(V + E)$ (cada vértice e aresta é visitada uma vez).
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Encontrar o \textbf{caminho mais curto} (quando as arestas não têm peso, ou todas têm peso 1);
+  \item Encontrar todos os vértices \textbf{alcançáveis} a partir de um ponto de partida;
+  \item Descobrir a \textbf{distância mínima} de um vértice a todos os outros;
+  \item Verificar se vértices podem ser \textbf{coloridos com 2 cores} (cada vizinho com cor diferente).
+\end{itemize}
+
+\begin{exemplodiabox}
+Você está numa cidade e quer saber quantos passos leva para chegar em cada bairro. BFS começa de um ponto, marca todos os bairros vizinhos como distância 1, depois marca os novos bairros como distância 2, e assim vai.
+\end{exemplodiabox}
+
+\subsection{Código}
+
+\incluircppcaption{algoritmos_avulsos/grafos/bfs.cpp}{BFS com fila (matriz de adjacência)}
+
+%==============================================================================
+\section{DFS --- Busca em profundidade}
+%==============================================================================
+
+\subsection{Conceito}
+
+\textbf{DFS} (Depth-First Search) explora o grafo indo \textbf{fundo} num caminho antes de voltar e tentar outro. Implementações: \textbf{recursiva} (via call stack) ou \textbf{iterativa} (via pilha explícita).
+
+Complexidade: $O(V + E)$ (igual a BFS).
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Detectar \textbf{ciclos} (há um caminho que volta para o mesmo vértice?);
+  \item Encontrar todos os \textbf{vértices alcançáveis} a partir de um ponto;
+  \item Ordenar \textbf{tarefas com dependências} (toposort);
+  \item \textbf{Explorar todas as possibilidades} quando não tem uma ordem ótima óbvia.
+\end{itemize}
+
+\begin{exemplodiabox}
+Explorar um labirinto: você entra por um corredor, vai até o fundo (sem saída), volta, tenta outro. DFS faz exatamente isso --- escolhe um caminho, vai fundo, volta, escolhe outro.
+\end{exemplodiabox}
+
+\subsection{DFS Recursivo}
+
+Mais limpo e direto: a pilha de recursão naturalmente guarda o caminho.
+
+\incluircppcaption{algoritmos_avulsos/grafos/dfs_recursivo_matriz.cpp}{DFS recursivo (matriz de adjacência)}
+
+\subsection{DFS Iterativo}
+
+Use quando a profundidade é muito grande (para evitar estouro de stack). Pilha explícita:
+
+\incluircppcaption{algoritmos_avulsos/grafos/dfs_iterativo_matriz.cpp}{DFS iterativo com pilha}
+
+%==============================================================================
+\section{Detecção de ciclos}
+%==============================================================================
+
+Um \textbf{ciclo} é um caminho que começa num vértice e volta para ele.
+
+\subsection{Em grafo sem direção (não-dirigido)}
+
+Se durante DFS você encontra um vizinho já visitado (que \textbf{não é o pai}), existe ciclo.
+
+Exemplo: vértices $A - B - C - A$ formam um triângulo; é um ciclo.
+
+\subsection{Em grafo com direção (dirigido)}
+
+Existe ciclo se durante DFS você volta a um vértice que \textbf{está sendo explorado agora} (que está na pilha).
+
+Exemplo: $A \to B \to C \to A$ forma um ciclo.
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Verificar se é possível fazer todas as tarefas (sem ficar preso em dependências circulares);
+  \item Detectar deadlock (dois ou mais processos se bloqueando mutuamente);
+  \item Validar ordem de compilação (não pode ter módulos que dependem um do outro).
+\end{itemize}
+
+\subsection{Código}
+
+\incluircppcaption{algoritmos_avulsos/grafos/hascycle.cpp}{Detecção de ciclo em grafo dirigido}
+
+%==============================================================================
+\section{Ordenação topológica}
+%==============================================================================
+
+\subsection{Conceito}
+
+\textbf{Ordenação topológica} é uma forma de ordenar os vértices de um grafo tal que para toda aresta $u \to v$, o vértice $u$ aparece \textbf{antes} de $v$ na sequência.
+
+Só funciona em grafos \textbf{sem ciclos} (acíclicos).
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Resolver \textbf{tarefas com dependências} (qual fazer primeiro?);
+  \item Compilar \textbf{módulos de código} (qual compilar antes?);
+  \item Sequência de \textbf{pré-requisitos} (qual disciplina cursar primeiro?);
+  \item Validar se um grafo \textbf{tem ciclo} (se não conseguir ordenar, tem ciclo).
+\end{itemize}
+
+\begin{exemplodiabox}
+Receita de bolo: misturar → assar → esfriar → decorar. Não posso decorar antes de esfriar. Toposort descobre a ordem certa respeitando essas restrições.
+\end{exemplodiabox}
+
+\subsection{Implementação}
+
+Após DFS, vértices com maior \textbf{tempo de saída} vêm primeiro. Ou: ao terminar de explorar um vértice em DFS, coloque-o no final da ordem; depois inverta o vetor.
+
+\incluircppcaption{algoritmos_avulsos/grafos/toposort.cpp}{Ordenação topológica via DFS}
+

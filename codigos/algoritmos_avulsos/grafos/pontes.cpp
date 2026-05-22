@@ -1,41 +1,48 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-long long n;
-vector<vector<pair<long long, long long>>> adj;
+// Encontra pontes (arestas cuja remocao desconecta o grafo)
+// Parametros: n = numero de vertices, adj[] = lista adjacencia com {vizinho, id_aresta}
+// Retorna: conjunto de IDs das arestas que sao pontes
+
+vector<int> tin, low;
 vector<bool> visited;
-vector<long long> tin, low;
-long long timer;
-map<pair<long long, long long>, long long> bridges;
+set<int> bridges;
+int timer_val = 0;
 
-void dfsBridges(long long v, long long edge_from_parent = -1) {
-    visited[v] = true;
-    tin[v] = low[v] = timer++;
-
-    for (auto t : adj[v]) {
-        long long to = t.first;
-        long long edge_id = t.second;
-        if (edge_id == edge_from_parent) continue;
-
-        if (visited[to]) {
-            low[v] = min(low[v], tin[to]);
+void dfs_bridges(int u, int parent_edge_id, const vector<vector<pair<int, int>>>& adj) {
+    visited[u] = true;
+    tin[u] = low[u] = timer_val++;
+    
+    for (auto [v, edge_id] : adj[u]) {
+        if (edge_id == parent_edge_id) continue; // ignora aresta de volta
+        
+        if (visited[v]) {
+            low[u] = min(low[u], tin[v]); // back edge
         } else {
-            dfsBridges(to, edge_id);
-            low[v] = min(low[v], low[to]);
-            if (low[to] > tin[v]) {
-                bridges[{min(v, to), max(v, to)}] = edge_id;
+            dfs_bridges(v, edge_id, adj);
+            low[u] = min(low[u], low[v]);
+            
+            // se low[v] > tin[u], entao v nao consegue voltar sem usar aresta u-v
+            if (low[v] > tin[u]) {
+                bridges.insert(edge_id);
             }
         }
     }
 }
 
-void find_bridges() {
-    timer = 0;
-    visited.assign(n, false);
+set<int> find_bridges(int n, const vector<vector<pair<int, int>>>& adj) {
     tin.assign(n, -1);
     low.assign(n, -1);
+    visited.assign(n, false);
     bridges.clear();
-    for (int i = 0; i < n; ++i) {
-        if (!visited[i]) dfsBridges(i, -1);
+    timer_val = 0;
+    
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            dfs_bridges(i, -1, adj);
+        }
     }
+    
+    return bridges;
 }

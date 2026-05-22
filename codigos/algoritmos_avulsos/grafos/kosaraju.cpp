@@ -1,70 +1,55 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Componentes Fortemente Conexos (Kosaraju) - O(V + E)
+// Kosaraju para encontrar componentes fortemente conexos
+// Parametros: n = numero de vertices, adj[] = lista adjacencia
+// Retorna: vetor onde componente[i] = ID do SCC contendo vertice i
 
-// ’visitado ’ rastreia os vértices que já foram visitados na DFS atual.vector<bool > visitado;
+vector<int> order;
+vector<bool> visited;
 
-// Executa uma busca em profundidade a partir do vértice v.
-// Cada vértice visitado é adicionado ao vetor ’saida ’ quando a DFS o deixa (pós-ordem).void dfs(int v, const vector<vector<int>>& adj , vector<int >& saida) {
-    visitado[v] = true;
-    for (int u : adj[v]) { 2.10 Algoritmo de Kruskal (Minimum Spanning Tree) A verificação de ciclos é feita de forma eficiente com uma estrutura Union- Find (DSU).A complexidade final do algoritmo é dominada pela ordenação das arestas: O(E logE).if (! visitado[u]) {
-        dfs(u, adj , saida);
+void dfs1(int u, const vector<vector<int>>& adj) {
+    visited[u] = true;
+    for (int v : adj[u]) {
+        if (!visited[v]) dfs1(v, adj);
+    }
+    order.push_back(u); // pos-order
+}
+
+void dfs2(int u, const vector<vector<int>>& adj_rev, int comp_id, vector<int>& component) {
+    visited[u] = true;
+    component[u] = comp_id;
+    for (int v : adj_rev[u]) {
+        if (!visited[v]) dfs2(v, adj_rev, comp_id, component);
     }
 }
-saida.push_back(v);
-}
 
-// entrada: adj -- lista de adjacência do grafo G
-// saida: componentes -- os componentes fortemente conexos de G
-// saida: adj_condensado -- lista de adjacência do grafo de condensação G^SCC
-void encontrar_sccs (const vector<vector<int>>& adj ,
-vector<vector<int>>& componentes ,
-vector<vector<int>>& adj_condensado ) {
-    int n = adj.size ();
-    componentes.clear ();
-    adj_condensado.clear ();
-
-    // ’ordem ’ será uma lista dos vértices de G ordenados pelo tempo de finalização.vector<int > ordem;
-    visitado.assign(n, false);
-
-    // Primeira série de buscas em profundidade no grafo original.for (int i = 0; i <n; i++) {
-        if (! visitado[i]) {
-            dfs(i, adj , ordem);
+void find_sccs(int n, const vector<vector<int>>& adj, vector<int>& component) {
+    visited.assign(n, false);
+    order.clear();
+    component.assign(n, -1);
+    
+    // primeira DFS para obter ordem de finalizacao
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) dfs1(i, adj);
+    }
+    
+    // cria grafo reverso
+    vector<vector<int>> adj_rev(n);
+    for (int u = 0; u < n; u++) {
+        for (int v : adj[u]) {
+            adj_rev[v].push_back(u);
         }
     }
-
-    // Cria a lista de adjacência do grafo transposto (G^T).vector<vector<int>> adj_reverso(n);
-    for (int v = 0; v <n; v++) {
-        for (int u : adj[v]) {
-            adj_reverso[u].push_back(v);
-        }
-    }
-
-    visitado.assign(n, false);
-    reverse(ordem.begin (), ordem.end());
-
-    // ’raiz_componente ’ indica o vértice raiz do SCC de um determinado vértice.vector<int > raiz_componente (n);
-
-    // Segunda série de buscas em profundidade , no grafo transposto.for (int v : ordem) {
-        if (! visitado[v]) {
-            vector<int > componente_atual ;
-            dfs(v, adj_reverso , componente_atual );
-
-            componentes.push_back( componente_atual );
-            int raiz = componente_atual [0];
-            for (int u : componente_atual ) {
-                raiz_componente [u] = raiz;
-            }
-        }
-    }
-
-    // Adiciona as arestas ao grafo de condensação.adj_condensado .assign(n, {});
-    for (int v = 0; v <n; v++) {
-        for (int u : adj[v]) {
-            if ( raiz_componente [v] != raiz_componente [u]) {
-                adj_condensado [ raiz_componente [v]].push_back( raiz_componente [u]);
-            }
+    
+    // segunda DFS em ordem reversa de finalizacao
+    visited.assign(n, false);
+    reverse(order.begin(), order.end());
+    int comp_id = 0;
+    for (int u : order) {
+        if (!visited[u]) {
+            dfs2(u, adj_rev, comp_id, component);
+            comp_id++;
         }
     }
 }

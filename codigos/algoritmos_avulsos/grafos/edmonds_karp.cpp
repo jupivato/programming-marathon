@@ -1,64 +1,57 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Edmonds -Karp - O(V * E^2)
-const int MAX = 110; // Número máximo de vértices
 const long long INF = 1e18;
 
-int n; // Número de vértices
-long long capacity[MAX][MAX];
-vector<int > adj[MAX];
+// Edmonds-Karp (Ford-Fulkerson com BFS) para fluxo maximo
+// Parametros: n = numero de vertices, cap[u][v] = capacidade u->v, source, sink
+// Retorna: valor do fluxo maximo de source ate sink
 
-// Encontra um caminho de aumento usando BFS
-long long bfs(int s, int t, vector<int >& parent) {
-    fill(parent.begin (), parent.end(), -1);
-    parent[s] = -2;
-    queue<pair<int , long long>> q;
-    q.push ({s, INF});
-
-    while (!q.empty ()) {
-        int u = q.front ().first;
-        long long flow = q.front ().second;
+long long bfs(int source, int sink, vector<int>& parent, const vector<vector<long long>>& cap) {
+    int n = cap.size();
+    fill(parent.begin(), parent.end(), -1);
+    parent[source] = source;
+    
+    queue<pair<int, long long>> q;
+    q.push({source, INF});
+    
+    while (!q.empty()) {
+        auto [u, flow] = q.front();
         q.pop();
-
-        for (int v : adj[u]) {
-            if (parent[v] == -1 && capacity[u][v] > 0) {
+        
+        for (int v = 0; v < n; v++) {
+            if (parent[v] == -1 && cap[u][v] > 0) {
                 parent[v] = u;
-                long long new_flow = min(flow , capacity[u][v]);
-                if (v == t) {
+                long long new_flow = min(flow, cap[u][v]);
+                
+                if (v == sink) {
                     return new_flow;
                 }
-                q.push ({v, new_flow });
+                
+                q.push({v, new_flow});
             }
         }
     }
-    return 0; // Nenhum caminho de aumento encontrado
+    
+    return 0;
 }
 
-// Função principal do Edmonds -Karp
-long long edmonds_karp(int s, int t) {
-    long long max_flow = 0;
-    vector<int > parent(n + 1);
+long long max_flow(int n, int source, int sink, vector<vector<long long>> cap) {
+    long long flow = 0;
+    vector<int> parent(n);
     long long new_flow;
-
-    // Enquanto houver um caminho de aumento
-    while (( new_flow = bfs(s, t, parent)) > 0) {
-        max_flow += new_flow;
-        int current = t;
-        while (current != s) {
-            int prev = parent[current ];
-            // Atualiza capacidades no grafo residual
-            capacity[prev ][ current] -= new_flow;
-            capacity[current ][ prev] += new_flow;
-            current = prev;
+    
+    while ((new_flow = bfs(source, sink, parent, cap)) > 0) {
+        flow += new_flow;
+        
+        int v = sink;
+        while (v != source) {
+            int u = parent[v];
+            cap[u][v] -= new_flow;
+            cap[v][u] += new_flow;
+            v = u;
         }
     }
-    return max_flow;
+    
+    return flow;
 }
-
-// Para usar:
-// 1.Defina ’n’ (número de vértices).
-// 2.Preencha a matriz ’capacity ’ e a lista ’adj ’.
-// Para arestas bidirecionais , adicione capacidade em ambos os sentidos.
-// 3.Chame edmonds_karp(source , sink).
-// 4.Lembre -se de limpar as estruturas (capacity , adj) para mú ltiplos casos de teste.
