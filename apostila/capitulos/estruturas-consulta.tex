@@ -1,0 +1,161 @@
+\chapter{Estruturas para consultas em intervalo}
+
+Quando um problema tem muitas consultas em um vetor ou matriz, o segredo e escolher a estrutura certa. Algumas estruturas respondem muito rapido, mas nao permitem atualizacoes; outras aceitam atualizacoes, mas custam mais por consulta.
+
+Neste capitulo voce vai ver o feijao com arroz das consultas em intervalo: prefixos, Fenwick (BIT), sparse table, segment tree, lazy propagation e maximo em janela.
+
+%==============================================================================
+\section{Soma de prefixo 2D}
+%==============================================================================
+
+\subsection{Conceito}
+
+A soma de prefixo 2D transforma cada consulta de submatriz em uma conta O(1). Voce pre-processa uma matriz de prefixos, e depois soma qualquer retangulo usando inclusao-exclusao.
+
+\textbf{Complexidade:} pre-processamento $O(nm)$, consulta $O(1)$.
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Muitas consultas de soma em submatrizes e a matriz nao muda;
+  \item Problemas de contagem em grade (mapas, tabuleiros, imagens);
+  \item Quando o custo de pre-processar compensa as consultas rapidas.
+\end{itemize}
+
+\begin{exemplodiabox}
+Voce tem um mapa de pontos por quarteirao e recebe muitas perguntas de "quantos pontos ha dentro deste bairro retangular". Em vez de somar do zero toda vez, voce monta uma tabela acumulada uma vez e cada resposta sai combinando quatro cantos.
+\end{exemplodiabox}
+
+\subsection{Codigo}
+
+\incluircppcaption{algoritmos_avulsos/estruturas/prefix_sum_2d.cpp}{Soma de prefixo 2D}
+
+%==============================================================================
+\section{Fenwick Tree (BIT)}
+%==============================================================================
+
+\subsection{Conceito}
+
+A Fenwick Tree (BIT) guarda somas parciais para responder soma de prefixo e atualizacao pontual em $O(\log n)$. Ela e menor e mais simples que uma segment tree para esse caso.
+
+\textbf{Complexidade:} update $O(\log n)$, query $O(\log n)$.
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Soma em intervalos com atualizacoes pontuais;
+  \item Quando precisa de uma estrutura leve e facil de implementar;
+  \item Problemas com muitas operacoes intercaladas de update e query.
+\end{itemize}
+
+\begin{exemplodiabox}
+Voce tem uma fila de caixas numeradas; um valor muda toda hora e voce precisa saber rapido a soma das caixas 0..k. A Fenwick guarda acumulados parciais para atualizar uma caixa e responder o prefixo sem varrer tudo.
+\end{exemplodiabox}
+
+\subsection{Codigo}
+
+\incluircppcaption{algoritmos_avulsos/estruturas/fenwick.cpp}{Fenwick Tree (BIT)}
+
+%==============================================================================
+\section{Sparse Table}
+%==============================================================================
+
+\subsection{Conceito}
+
+A Sparse Table pre-computa minimos (ou maximos) para todos os intervalos de tamanho potencia de 2. Ela responde RMQ (Range Minimum Query) em $O(1)$, mas so funciona se o array for estatico.
+
+\textbf{Complexidade:} pre-processamento $O(n \log n)$, consulta $O(1)$.
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Muitas consultas de minimo/maximo e nenhum update;
+  \item Problemas com milhoes de queries no mesmo array;
+  \item Quando a segment tree ficaria lenta por volume de consultas.
+\end{itemize}
+
+\begin{exemplodiabox}
+Voce tem a altura de montanhas em uma trilha e recebe varias perguntas de "qual o ponto mais baixo entre A e B". Como a trilha nao muda, voce pre-computa minimos de blocos e cada pergunta vira comparar dois blocos.
+\end{exemplodiabox}
+
+\subsection{Codigo}
+
+\incluircppcaption{algoritmos_avulsos/estruturas/sparse_table.cpp}{Sparse Table (RMQ estatico)}
+
+%==============================================================================
+\section{Segment Tree}
+%==============================================================================
+
+\subsection{Conceito}
+
+A Segment Tree divide o array em intervalos e guarda a soma (ou outro agregado) de cada intervalo. Ela permite query e update pontual em $O(\log n)$.
+
+\textbf{Complexidade:} build $O(n)$, update $O(\log n)$, query $O(\log n)$.
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Quando precisa de consultas em intervalo e atualizacoes pontuais;
+  \item Problemas com soma, minimo, maximo ou outro agregado;
+  \item Quando o array muda durante o problema.
+\end{itemize}
+
+\begin{exemplodiabox}
+Voce tem um calendario de vendas: corrige um dia especifico e depois soma um intervalo de dias. A segment tree divide o calendario em blocos e combina poucos blocos para responder, sem recalcular tudo.
+\end{exemplodiabox}
+
+\subsection{Codigo}
+
+\incluircppcaption{algoritmos_avulsos/estruturas/segment_tree.cpp}{Segment Tree para soma}
+
+%==============================================================================
+\section{Segment Tree com Lazy Propagation}
+%==============================================================================
+
+\subsection{Conceito}
+
+A Lazy Propagation permite fazer updates em intervalos inteiros sem descer por toda a arvore. Em vez disso, o update fica \"pendente\" no no e so e propagado quando necessario.
+
+\textbf{Complexidade:} update $O(\log n)$, query $O(\log n)$.
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Updates em intervalo (ex: adicionar valor em [L, R]);
+  \item Consultas de soma em intervalo no meio das atualizacoes;
+  \item Quando um update pontual seria lento demais.
+\end{itemize}
+
+\begin{exemplodiabox}
+Voce precisa aplicar um bonus em todos os funcionarios de um setor (intervalo) e depois consultar o total de outro setor. Em vez de atualizar um por um, voce registra o bonus no bloco do setor e so expande quando uma consulta entra nele.
+\end{exemplodiabox}
+
+\subsection{Codigo}
+
+\incluircppcaption{algoritmos_avulsos/estruturas/segment_tree_lazy.cpp}{Segment Tree com Lazy (soma)}
+
+%==============================================================================
+\section{Maximo em janela (Sliding Window)}
+%==============================================================================
+
+\subsection{Conceito}
+
+Usando um deque, da para manter o maximo de cada janela de tamanho fixo em $O(n)$. Cada elemento entra e sai do deque no maximo uma vez.
+
+\textbf{Complexidade:} $O(n)$.
+
+\subsection{Quando usar}
+
+\begin{itemize}[nosep]
+  \item Para maximo ou minimo em cada janela fixa;
+  \item Problemas de series temporais (ultimos $k$ dias);
+  \item Quando precisa de resultado para todas as janelas consecutivas.
+\end{itemize}
+
+\begin{exemplodiabox}
+Voce monitora o volume de acessos por minuto e quer o pico dos ultimos k minutos a cada minuto. Mantendo um deque de candidatos, o maior da janela esta sempre na frente.
+\end{exemplodiabox}
+
+\subsection{Codigo}
+
+\incluircppcaption{algoritmos_avulsos/estruturas/sliding_window_max.cpp}{Maximo em janela (deque)}
