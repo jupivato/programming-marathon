@@ -209,3 +209,34 @@ Construção $O(n \log \sigma)$ usando \texttt{map}; com array para alfabeto fix
 
 \subsection{Código}
 \incluircppcaption{algoritmos_avulsos/strings/suffix_automaton.cpp}{Autômato de sufixos}
+
+%==============================================================================
+\section{Menor rotação e decomposição de Lyndon}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Encontrar a rotação circular lexicograficamente mínima de uma string, ou decompor uma string em palavras de Lyndon (fatores que são estritamente menores que suas rotações próprias).
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Precisa comparar todas as rotações de uma string eficientemente.
+  \item Problemas com cadeias circulares (ciclos, cadeias rotacionadas) ou automatas circulares.
+  \item Ao reduzir consultas sobre rotações para uma posição canônica.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Booth encontra em tempo linear o índice de início da rotação mínima lexicográfica sem gerar todas as rotações. Duval devolve a decomposição de Lyndon em tempo linear, útil para propriedades combinatórias de palavras e para obter factorização canônica.
+
+\subsection{Complexidade Temporal}
+Ambos executam em $O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dada uma string $s$, imprima sua rotação lexicograficamente mínima.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/minimal_rotation_booth.cpp}{Booth — menor rotação lexicográfica}
+\incluircppcaption{algoritmos_avulsos/strings/duval_lyndon.cpp}{Duval — decomposição de Lyndon}
+\incluircppcaption{algoritmos_avulsos/strings/minimal_rotation_naive.cpp}{Naive — todas as rotações (O(n^2))}
+\incluircppcaption{algoritmos_avulsos/strings/minimal_rotation_sa.cpp}{Suffix-array — rotação mínima via SA (O(n log n))}
