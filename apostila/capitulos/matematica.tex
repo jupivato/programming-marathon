@@ -1,0 +1,511 @@
+\chapter{Matemática Implementada}
+
+%==============================================================================
+\section{MDC}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Problemas de divisibilidade, simplificação de frações, períodos e coprimalidade.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item É preciso saber o maior divisor comum de dois números.
+  \item O enunciado fala em números coprimos.
+  \item É necessário simplificar frações ou razões.
+  \item Ciclos ou passos precisam ser combinados por divisibilidade.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+O algoritmo de Euclides usa a identidade $\gcd(a,b)=\gcd(b,a\bmod b)$ até o segundo valor virar zero.
+
+\subsection{Complexidade Temporal}
+$O(\log \min(a,b))$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dados dois inteiros $a$ e $b$, calcule o maior inteiro que divide ambos.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/gcd.cpp}{MDC}
+
+%==============================================================================
+\section{MMC}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Problemas que combinam períodos, ciclos ou múltiplos comuns.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Dois eventos repetem em intervalos diferentes.
+  \item É preciso encontrar quando ciclos coincidem.
+  \item O enunciado pede menor múltiplo comum.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use a relação $\operatorname{lcm}(a,b)=|a/\gcd(a,b)\cdot b|$, dividindo antes de multiplicar para reduzir risco de overflow.
+
+\subsection{Complexidade Temporal}
+$O(\log \min(a,b))$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dois alarmes tocam a cada $a$ e $b$ minutos. Em quantos minutos tocarão juntos novamente?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/lcm.cpp}{MMC}
+
+%==============================================================================
+\section{Divisores}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Listar todos os divisores de um número ou testar estruturas baseadas em fatoração simples.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O número é pequeno o suficiente para testar até $\sqrt n$.
+  \item É preciso enumerar divisores.
+  \item O problema depende de pares de fatores $d$ e $n/d$.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Percorra candidatos $d$ até $\sqrt n$. Quando $d$ divide $n$, adicione $d$ e, se diferente, também $n/d$.
+
+\subsection{Complexidade Temporal}
+$O(\sqrt n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado $n$, imprima todos os seus divisores em ordem crescente.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/divisores.cpp}{Divisores}
+
+%==============================================================================
+\section{Exponenciação rápida}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Calcular potências grandes, com ou sem módulo.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O expoente pode ser grande.
+  \item O problema pede $a^b \bmod m$.
+  \item Multiplicar $a$ por ele mesmo $b$ vezes é inviável.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Escreva o expoente em binário. A cada bit, eleve a base ao quadrado e multiplique na resposta apenas quando o bit atual estiver ligado.
+
+\subsection{Complexidade Temporal}
+$O(\log b)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Calcule $a^b \bmod 10^9+7$ para $b$ até $10^{18}$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/fast_pow.cpp}{Exponenciação rápida}
+
+%==============================================================================
+\section{Inverso modular}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Fazer divisão em aritmética modular quando o módulo é primo.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item A resposta deve ser dada módulo primo.
+  \item É preciso dividir por $a$ no módulo.
+  \item $a$ não é múltiplo do módulo.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Pelo pequeno teorema de Fermat, se $p$ é primo, então $a^{-1}\equiv a^{p-2}\pmod p$. Calcule essa potência com exponenciação rápida.
+
+\subsection{Complexidade Temporal}
+$O(\log p)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Calcule $\frac{x}{y} \bmod 10^9+7$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/inverso_modular.cpp}{Inverso modular}
+
+%==============================================================================
+\section{Fibonacci por matriz}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Calcular o $n$-ésimo termo de uma recorrência linear com $n$ grande.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item $n$ é grande demais para DP linear.
+  \item A recorrência pode ser escrita como matriz de transição.
+  \item O problema pede Fibonacci ou recorrência parecida.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+A matriz $\begin{pmatrix}1&1\\1&0\end{pmatrix}$ transforma pares consecutivos de Fibonacci. Elevar essa matriz a $n$ dá $F_n$.
+
+\subsection{Complexidade Temporal}
+$O(\log n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Calcule $F_n \bmod 10^9+7$ para $n$ até $10^{18}$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/fibonacci.cpp}{Fibonacci por matriz}
+
+%==============================================================================
+\section{Conversão da base 10 para base $b$}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Representar um número decimal em outra base.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O enunciado pede saída em base binária, octal, hexadecimal ou base arbitrária.
+  \item A base está entre 2 e 36.
+  \item É preciso manipular dígitos como caracteres.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Divida o número repetidamente pela base e guarde os restos. A representação final é a sequência de restos invertida.
+
+\subsection{Complexidade Temporal}
+$O(\log_b n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Converta o número decimal $31$ para base $16$.
+
+\textbf{Exemplo:} Resposta \texttt{1F}.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/base10_para_b.cpp}{Base 10 para base b}
+
+%==============================================================================
+\section{Conversão da base $b$ para base 10}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Interpretar uma string numérica escrita em uma base arbitrária.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O número de entrada vem como texto.
+  \item A base está entre 2 e 36.
+  \item É necessário validar dígitos incompatíveis com a base.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Percorra os dígitos da esquerda para a direita. A cada passo, multiplique o acumulado pela base e some o valor do dígito atual.
+
+\subsection{Complexidade Temporal}
+$O(|s|)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Converta \texttt{1F} da base $16$ para decimal.
+
+\textbf{Exemplo:} Resposta $31$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/base_b_para_10.cpp}{Base b para base 10}
+
+%==============================================================================
+\section{Crivo de Eratóstenes}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Pré-processar primalidade de todos os números até um limite $N$.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Há muitas consultas de primalidade.
+  \item O maior valor possível cabe em memória.
+  \item É preciso listar primos até $N$.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Inicialmente todos são candidatos a primo. Para cada primo $p$, marque seus múltiplos a partir de $p^2$ como compostos.
+
+\subsection{Complexidade Temporal}
+$O(N \log\log N)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Responda várias consultas perguntando se $x$ é primo, com $x \leq 10^6$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/crivo_eratostenes.cpp}{Crivo de Eratóstenes}
+
+%==============================================================================
+\section{Crivo segmentado}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Encontrar primos em um intervalo $[L,R]$ quando $R$ é grande, mas o tamanho do intervalo é tratável.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item $R$ é grande demais para crivar tudo até $R$.
+  \item O intervalo $R-L+1$ cabe em memória.
+  \item É necessário listar ou contar primos em faixa.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Crive os primos até $\sqrt R$. Depois use esses primos para marcar os compostos apenas dentro do intervalo $[L,R]$.
+
+\subsection{Complexidade Temporal}
+$O(\sqrt R\log\log\sqrt R + (R-L+1)\log\log R)$, na prática proporcional ao intervalo mais o pré-processamento.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Liste os primos entre $10^{12}$ e $10^{12}+10^5$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/crivo_segmentado.cpp}{Crivo segmentado}
+
+%==============================================================================
+\section{Pollard Rho}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Fatorar inteiros grandes de 64 bits.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Divisão por tentativa até $\sqrt n$ é lenta demais.
+  \item O número pode ter fatores grandes.
+  \item É necessário fatorar vários valores até $10^{18}$.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use Miller-Rabin para testar primalidade e Pollard Rho para encontrar um fator não trivial por pseudoaleatoriedade e MDC. Depois fatore recursivamente.
+
+\subsection{Complexidade Temporal}
+Subexponencial na prática para 64 bits; usualmente rápido em maratona.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Fatore um inteiro $n$ de até $10^{18}$ em fatores primos.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/pollard_rho.cpp}{Pollard Rho}
+
+%==============================================================================
+\section{Números de Catalan}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Contar estruturas balanceadas, como parênteses corretos, árvores binárias e caminhos que não passam da diagonal.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema envolve balanceamento.
+  \item A contagem segue a recorrência de dividir em lado esquerdo e direito.
+  \item $n$ é pequeno e o valor exato cabe no tipo usado.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+A DP usa $C_0=1$ e $C_n=\sum_{i=0}^{n-1} C_iC_{n-1-i}$, escolhendo o tamanho da parte esquerda e direita.
+
+\subsection{Complexidade Temporal}
+$O(n^2)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Quantas sequências válidas de parênteses existem com $n$ pares?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/catalan.cpp}{Catalan por DP}
+
+%==============================================================================
+\section{Catalan módulo primo}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Calcular números de Catalan grandes módulo primo.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item $n$ é grande.
+  \item A resposta deve ser dada módulo primo.
+  \item É possível pré-computar fatoriais e inversos.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use $C_n=\frac{1}{n+1}\binom{2n}{n}$. Com fatoriais e inversos modulares, cada consulta sai em $O(1)$ depois do pré-processamento.
+
+\subsection{Complexidade Temporal}
+Pré-processamento $O(n\log MOD)$ no código mostrado e consulta $O(\log MOD)$ para o inverso de $n+1$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Calcule a quantidade de sequências válidas de parênteses com $n$ pares módulo $10^9+7$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/catalan_mod.cpp}{Catalan modular}
+
+%==============================================================================
+\section{Eliminação de Gauss}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Calcular determinante, inversa ou escalonar matrizes.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema envolve matriz quadrada.
+  \item É preciso calcular determinante.
+  \item É necessário inverter uma matriz.
+  \item Sistemas lineares aparecem como parte da modelagem.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Escolha um pivô por coluna, troque linhas quando necessário e zere os elementos abaixo do pivô. Para inversa, aplique Gauss-Jordan na matriz aumentada $[A|I]$.
+
+\subsection{Complexidade Temporal}
+$O(n^3)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dada uma matriz quadrada, calcule seu determinante e diga se ela é invertível.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/gauss_eliminacao.cpp}{Eliminação de Gauss}
+
+%==============================================================================
+\section{Sistemas lineares}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Resolver $n$ equações lineares com $n$ variáveis.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O enunciado vira um sistema $Ax=b$.
+  \item Há solução única.
+  \item Os coeficientes são reais ou podem ser tratados com \texttt{double}.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use eliminação de Gauss com pivoteamento parcial para transformar a matriz aumentada em triangular superior. Depois resolva as variáveis por substituição reversa.
+
+\subsection{Complexidade Temporal}
+$O(n^3)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Resolva um sistema linear com três equações e três incógnitas.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/gauss_sistemas.cpp}{Sistema linear por Gauss}
+
+%==============================================================================
+\section{Regra de Cramer}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Resolver sistemas pequenos usando determinantes.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O sistema é pequeno.
+  \item O determinante da matriz dos coeficientes é não nulo.
+  \item A solução por determinantes é mais direta para o enunciado.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Calcule o determinante de $A$. Para cada variável, substitua a coluna correspondente pelo vetor $b$ e divida o determinante resultante por $\det(A)$.
+
+\subsection{Complexidade Temporal}
+$O(n^4)$ usando determinante $O(n^3)$ para cada variável.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Resolva um sistema linear pequeno usando a regra de Cramer.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/cramer.cpp}{Regra de Cramer}
+
+%==============================================================================
+\section{FFT}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Multiplicar polinômios ou convoluir vetores rapidamente.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item A solução precisa de convolução.
+  \item Multiplicar todos os pares diretamente seria $O(n^2)$.
+  \item Os coeficientes podem ser tratados com arredondamento após FFT.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+FFT transforma coeficientes em valores em raízes complexas da unidade. Multiplique ponto a ponto e aplique a transformada inversa para recuperar os coeficientes da convolução.
+
+\subsection{Complexidade Temporal}
+$O(n \log n)$, com $n$ potência de 2 suficiente para conter o resultado.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dados dois polinômios, calcule os coeficientes do produto.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/fft.cpp}{FFT}
+
+%==============================================================================
+\section{Produto vetorial}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Determinar orientação entre três pontos usando coordenadas inteiras.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item É preciso saber se a curva é à esquerda ou à direita.
+  \item O problema envolve colinearidade.
+  \item Geometria pode ser resolvida com inteiros, evitando erro de ponto flutuante.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+O produto vetorial de $(b-a)$ com $(c-a)$ indica a orientação. Sinal positivo significa esquerda, negativo significa direita e zero significa colinear.
+
+\subsection{Complexidade Temporal}
+$O(1)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dados três pontos inteiros, diga se eles formam uma curva à esquerda, à direita ou se são colineares.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/matematica/produto_vetorial.cpp}{Produto vetorial}

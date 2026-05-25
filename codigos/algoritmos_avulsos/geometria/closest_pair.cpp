@@ -1,76 +1,66 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Pré-requisito: Template Básico de Geometria 2D com a struct ’point ’.
+struct Point {
+    double x, y;
+};
 
-// --- Par de Pontos Mais Próximo ---
-
-// Função auxiliar para calcular a distância ao quadrado.Strings
-// Evitar o uso de sqrt () até o final torna o código mais rá pido e preciso.double distSq(point p1 , point p2) {
-    return (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y);
+double dist_sq(Point a, Point b) {
+    double dx = a.x - b.x;
+    double dy = a.y - b.y;
+    return dx * dx + dy * dy;
 }
 
-// Função de força bruta para os casos base da recursão
-double closest_brute_force (const vector<point >& pts) {
-    double min_dist_sq = DBL_MAX; // DBL_MAX está em <cfloat >
-    for (int i = 0; i <pts.size (); ++i) {
-        for (int j = i + 1; j <pts.size (); ++j) {
-            min_dist_sq = min(min_dist_sq , distSq(pts[i], pts[j ]));
+double solve(vector<Point>& pts, int l, int r, vector<Point>& aux) {
+    if (r - l <= 3) {
+        double best = DBL_MAX;
+        for (int i = l; i < r; i++) {
+            for (int j = i + 1; j < r; j++) {
+                best = min(best, dist_sq(pts[i], pts[j]));
+            }
+        }
+        sort(pts.begin() + l, pts.begin() + r, [](Point a, Point b) {
+            return a.y < b.y;
+        });
+        return best;
+    }
+
+    int m = (l + r) / 2;
+    double mid_x = pts[m].x;
+    double best = min(solve(pts, l, m, aux), solve(pts, m, r, aux));
+
+    merge(pts.begin() + l, pts.begin() + m,
+          pts.begin() + m, pts.begin() + r,
+          aux.begin(), [](Point a, Point b) {
+              return a.y < b.y;
+          });
+    copy(aux.begin(), aux.begin() + (r - l), pts.begin() + l);
+
+    vector<Point> strip;
+    for (int i = l; i < r; i++) {
+        double dx = pts[i].x - mid_x;
+        if (dx * dx < best) strip.push_back(pts[i]);
+    }
+
+    for (int i = 0; i < (int)strip.size(); i++) {
+        for (int j = i + 1; j < (int)strip.size(); j++) {
+            double dy = strip[j].y - strip[i].y;
+            if (dy * dy >= best) break;
+            best = min(best, dist_sq(strip[i], strip[j]));
         }
     }
-    return min_dist_sq;
+    return best;
 }
 
-// Função recursiva principal
-double closest_pair_recursive (vector<point >& pts_sorted_by_x ) {
-    int n = pts_sorted_by_x .size ();
+// Retorna a menor distancia euclidiana entre dois pontos.
+double closest_pair(vector<Point> pts) {
+    if (pts.size() < 2) return DBL_MAX;
 
-    // 1.Caso base: se há poucos pontos , usa força bruta.if (n <= 3) {
-        return closest_brute_force ( pts_sorted_by_x );
-    }
+    sort(pts.begin(), pts.end(), [](Point a, Point b) {
+        if (a.x != b.x) return a.x < b.x;
+        return a.y < b.y;
+    });
 
-    // 2.Dividir
-    int mid = n / 2;
-    point mid_point = pts_sorted_by_x [mid];
-
-    // Cria os subconjuntos esquerdo e direito
-    vector<point > left_half , right_half;
-    for (int i = 0; i <mid; ++i) left_half.push_back( pts_sorted_by_x [i]);
-    for (int i = mid; i <n; ++i) right_half.push_back( pts_sorted_by_x [i]);
-
-    // 3.Conquistar: chama recursivamente
-    double dl_sq = closest_pair_recursive (left_half);
-    double dr_sq = closest_pair_recursive (right_half);
-    double min_dist_sq = min(dl_sq , dr_sq);
-
-    // 4.Combinar: verificar pares na faixa central
-    vector<point > strip;
-    for (const auto& p : pts_sorted_by_x ) {
-        // Adiciona pontos que estão na faixa de largura 2*d da linha central
-        if (pow(p.x - mid_point.x, 2) <min_dist_sq) {
-            strip.push_back(p);
-        }
-    }
-
-    // Ordena a faixa pela coordenada Y.Este sort é o gargalo para O(N log^2 N).sort(strip.begin (), strip.end(), []( point a, point b){ return a.y <b.y; });
-
-    // Verifica os pares dentro da faixa
-    for (int i = 0; i <strip.size (); ++i) {
-        // A otimização chave: para cada ponto , só precisamos verificar
-        // um número constante de vizinhos próximos no eixo Y.for (int j = i + 1; j <strip.size () && pow(strip[j].y - strip[i].y, 2) <min_dist_sq; ++j) {
-            min_dist_sq = min(min_dist_sq , distSq(strip[i], strip[j]));
-        }
-    }
-
-    return min_dist_sq;
-}
-
-// Função principal que o usuário chama
-double closest_pair(vector<point >& pts) {
-    if (pts.size () <2) return DBL_MAX;
-
-    // Passo de pré-processamento: ordenar todos os pontos por X
-    sort(pts.begin (), pts.end(), []( point a, point b){ return a .x <b.x; });
-
-    // A função recursiva retorna a distância ao quadrado , entã o tiramos a raiz no final.return sqrt( closest_pair_recursive (pts));
+    vector<Point> aux(pts.size());
+    return sqrt(solve(pts, 0, (int)pts.size(), aux));
 }

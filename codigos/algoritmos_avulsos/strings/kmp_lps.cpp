@@ -1,11 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// KMP - Função de Prefixo - O(|s|)
-vector<int > prefix_function (const string& s) {
-    int n = s.length ();
-    vector<int > pi(n);
-    for (int i = 1; i <n; i++) {
+// KMP - funcao de prefixo - O(|s|)
+vector<int> prefix_function(const string& s) {
+    int n = (int)s.size();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
         int j = pi[i - 1];
         while (j > 0 && s[i] != s[j]) {
             j = pi[j - 1];

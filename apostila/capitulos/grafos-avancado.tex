@@ -1,165 +1,185 @@
 \chapter{Grafos III: Avançado}
 
-\section{Componentes Fortemente Conexos (SCC)}
+\section{Tarjan para SCC}
 
-Em um grafo dirigido, um \textbf{componente fortemente conexo} é um subconjunto maximal de vértices onde todo vértice consegue alcançar todo outro vértice no subconjunto.
-
-\textbf{Aplicações:} analisar ciclos de dependência, redes sociais, fluxos em circuitos.
-
-\subsection{Tarjan}
-
-Tarjan encontra todos os SCCs em uma única passada de DFS usando uma pilha.
-
-\textbf{Complexidade:} $O(V + E)$.
+\subsection{Padrão do Problema}
+Encontrar componentes fortemente conexos em um grafo dirigido.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Encontrar \textbf{ciclos} em grafos dirigidos;
-  \item Condensar um grafo em componentes \textbf{fortemente conexos};
-  \item Quando precisa de uma \textbf{única passada} eficiente.
+  \item É preciso agrupar vértices que se alcançam mutuamente.
+  \item O grafo é dirigido.
+  \item Uma única DFS eficiente é desejável.
+  \item O grafo condensado em DAG será usado depois.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Tarjan usa tempos de entrada, valores \texttt{low} e uma pilha de vértices ativos. Quando um vértice é raiz de componente, todos os vértices acima dele na pilha formam um SCC.
+
+\subsection{Complexidade Temporal}
+$O(V + E)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você tem um mapa de cidades com estradas de mão única. Tarjan encontra grupos de cidades onde você pode ir de qualquer uma para qualquer outra (ciclos). Isso ajuda a entender se há deadlocks ou dependências circulares.
+\textbf{Enunciado:} Em um grafo de ruas de mão única, encontre grupos de cidades em que qualquer cidade alcança qualquer outra do mesmo grupo.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/tarjan.cpp}{Tarjan}
 
-\subsection{Kosaraju}
+\section{Kosaraju para SCC}
 
-Kosaraju também encontra SCCs, usando duas DFS: uma no grafo original, outra no grafo transposto.
-
-\textbf{Complexidade:} $O(V + E)$, mas com constante maior que Tarjan.
+\subsection{Padrão do Problema}
+Encontrar componentes fortemente conexos usando duas passagens de DFS.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Quando a implementação de Tarjan parece complexa;
-  \item Quando já tem o \textbf{grafo transposto} disponível;
-  \item Quando precisa de clareza sobre o algoritmo.
+  \item A clareza da implementação é prioridade.
+  \item O grafo transposto é fácil de construir.
+  \item É aceitável fazer duas DFS completas.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Primeiro rode DFS no grafo original para obter ordem de término. Depois rode DFS no grafo transposto em ordem reversa; cada nova busca forma um SCC.
+
+\subsection{Complexidade Temporal}
+$O(V + E)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você faz uma DFS para ver quando cada cidade ``termina'' de ser visitada. Depois, em ordem reversa, você faz outra DFS no mapa de volta (arestas reversas). Cada novo grupo encontrado é um SCC.
+\textbf{Enunciado:} Dado um grafo dirigido de dependências, separe os módulos em grupos de dependência circular.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/kosaraju.cpp}{Kosaraju}
 
-\section{Pontes e Articulações}
+\section{Pontes}
 
-Uma \textbf{ponte} é uma aresta cuja remoção desconecta o grafo. Uma \textbf{articulação} é um vértice cuja remoção desconecta o grafo.
-
-\textbf{Aplicações:} identificar pontos críticos em redes, robustez de sistemas.
-
-\subsection{Encontrar pontes}
-
-Usando DFS com valores \texttt{tin} (tempo de descoberta) e \texttt{low} (menor vértice alcançável sem usar aresta de volta).
-
-\textbf{Complexidade:} $O(V + E)$.
+\subsection{Padrão do Problema}
+Encontrar arestas cuja remoção aumenta o número de componentes conectados de um grafo não dirigido.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Encontrar \textbf{pontos críticos} em redes (internet, estradas);
-  \item Analisar \textbf{robustez} de um grafo;
-  \item Identificar componentes biconexos.
+  \item O problema pede estradas, links ou conexões críticas.
+  \item O grafo é não dirigido.
+  \item É necessário saber quais arestas não pertencem a nenhum ciclo.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Faça DFS mantendo \texttt{tin} e \texttt{low}. Uma aresta de árvore $(v,to)$ é ponte se \texttt{low[to] > tin[v]}.
+
+\subsection{Complexidade Temporal}
+$O(V + E)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você tem um mapa de cidades conectadas por estradas. Uma ponte é uma estrada cuja destruição deixaria cidades isoladas. Encontrar pontes ajuda a reforçar a infraestrutura.
+\textbf{Enunciado:} Em uma rede de estradas, liste as estradas cuja remoção deixa alguma cidade isolada do restante.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/pontes.cpp}{Encontrar pontes}
 
-\section{Fluxo Máximo}
+\section{Edmonds-Karp}
 
-O \textbf{fluxo máximo} entre dois vértices é o máximo de ``carga'' que consegue passar de um ponto a outro respeitando as capacidades das arestas.
-
-\textbf{Teorema de Max-Flow Min-Cut:} o fluxo máximo é igual à capacidade mínima do corte que separa origem e destino.
-
-\textbf{Aplicações:} roteamento de rede, matching em grafos bipartidos, circulação de recursos.
-
-\subsection{Edmonds-Karp}
-
-Edmonds-Karp é Ford-Fulkerson com BFS para encontrar caminhos de aumento.
-
-\textbf{Complexidade:} $O(VE^2)$.
+\subsection{Padrão do Problema}
+Fluxo máximo entre origem e destino em grafo capacitado, com implementação simples.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Quando os números não são muito grandes;
-  \item Quando precisa de uma implementação \textbf{simples e correta};
-  \item Para verificação rápida em competições.
+  \item O grafo de fluxo é pequeno ou médio.
+  \item A prioridade é uma implementação direta.
+  \item É preciso validar uma modelagem de fluxo rapidamente.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+É Ford-Fulkerson escolhendo caminhos de aumento por BFS. A cada caminho, envia o gargalo possível e atualiza capacidades residuais.
+
+\subsection{Complexidade Temporal}
+$O(VE^2)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você tem um sistema de canos com capacidades diferentes. O fluxo máximo é quanto você consegue bombear de ponta a ponta. Edmonds-Karp encontra isso achando caminhos de aumento iterativamente.
+\textbf{Enunciado:} Dado um sistema de canos com capacidades, calcule quanto fluxo máximo pode sair de $s$ e chegar em $t$.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/edmonds_karp.cpp}{Edmonds-Karp}
 
-\subsection{Dinic}
+\section{Dinic}
 
-Dinic é uma versão otimizada de Ford-Fulkerson que usa grafos de níveis.
-
-\textbf{Complexidade:} $O(V^2 E)$, muito mais rápido na prática.
+\subsection{Padrão do Problema}
+Fluxo máximo em grafos maiores, usando níveis e bloqueio de fluxo.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Quando os números são \textbf{muito grandes};
-  \item Quando capacidades são altas (Edmonds-Karp fica lento);
-  \item Na maioria dos problemas de \textbf{fluxo em competições}.
+  \item Edmonds-Karp ficaria lento.
+  \item O problema de competição pede fluxo máximo de forma central.
+  \item Há muitas arestas ou capacidades altas.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Dinic alterna BFS para construir grafo de níveis e DFS para enviar fluxos bloqueantes. Isso reduz a quantidade de caminhos de aumento processados separadamente.
+
+\subsection{Complexidade Temporal}
+$O(V^2E)$ no caso geral.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Dinic é Edmonds-Karp turbinado: em vez de achar um caminho por vez, ele encontra múltiplos caminhos em paralelo usando um grafo auxiliar de níveis.
+\textbf{Enunciado:} Em uma rede com milhares de conexões e capacidades, calcule o fluxo máximo entre a fonte e o sorvedouro.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/dinic.cpp}{Dinic}
 
 \section{Min-Cut}
 
-O \textbf{corte mínimo} é o conjunto de arestas cuja remoção desconecta origem do destino, com capacidade total mínima.
-
-\textbf{Teorema:} Min-Cut = Max-Flow (em grafos com capacidades).
+\subsection{Padrão do Problema}
+Encontrar o corte de menor capacidade que separa uma origem de um destino em grafo capacitado.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Encontrar o \textbf{gargalo crítico} de uma rede;
-  \item Particionar um grafo com \textbf{mínimo de perda};
-  \item Aplicações em visão computacional (segmentação de imagens).
+  \item O problema pede gargalo mínimo de separação.
+  \item Já existe ou será calculado fluxo máximo.
+  \item É preciso particionar vértices por alcançabilidade no grafo residual.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Após calcular fluxo máximo, faça busca no grafo residual a partir da origem. As arestas do conjunto alcançável para o não alcançável formam o corte mínimo.
+
+\subsection{Complexidade Temporal}
+Dominada pelo algoritmo de fluxo usado; a busca final custa $O(V + E)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Se você quer cortar uma rede de canos em dois grupos com perda mínima de capacidade, o corte mínimo identifica exatamente quais canos cortar. É tão importante que tem nome matemático próprio.
+\textbf{Enunciado:} Determine quais conexões remover para separar $s$ de $t$ com a menor perda total de capacidade.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/mincut.cpp}{Min-Cut}
 
 \section{2-SAT}
 
-\textbf{2-SAT} é um problema de satisfazibilidade booleana onde cada cláusula tem exatamente 2 literais. \textbf{Solúvel em tempo polinomial} usando grafos de implicação e SCCs.
-
-\textbf{Complexidade:} $O(V + E)$.
-
-\subsection{Como funciona}
-
-Cada variável $x_i$ vira dois vértices: $x_i$ e $\neg x_i$ (negação). Cada cláusula $(a \vee b)$ vira implicações: $\neg a \Rightarrow b$ e $\neg b \Rightarrow a$. Depois, encontra SCCs: se $x_i$ e $\neg x_i$ estão no mesmo SCC, o problema é \textbf{insatisfazível}.
+\subsection{Padrão do Problema}
+Restrições booleanas em que cada cláusula envolve no máximo dois literais.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Problemas com \textbf{restrições booleanas} (sim/não);
-  \item Agendamento com conflitos;
-  \item Coloração de grafos com 2 cores e restrições.
+  \item Cada variável tem duas escolhas.
+  \item As restrições podem ser escritas como $(a \vee b)$.
+  \item É preciso decidir se existe atribuição válida.
+  \item O problema pode ser transformado em implicações.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Monte o grafo de implicações: $(a \vee b)$ vira $\neg a \Rightarrow b$ e $\neg b \Rightarrow a$. Se uma variável e sua negação ficam no mesmo SCC, não há solução.
+
+\subsection{Complexidade Temporal}
+$O(V + E)$ no grafo de implicações.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você tem 3 tarefas e cada uma pode ser feita de dia ou de noite, com restrições tipo ``Se A é de dia, então B deve ser de noite''. 2-SAT descobre se existe uma atribuição válida e retorna ela.
+\textbf{Enunciado:} Cada tarefa deve ser feita de dia ou de noite, com restrições do tipo ``se A é de dia, B deve ser de noite''. Determine se existe agenda válida.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/two_sat.cpp}{2-SAT}

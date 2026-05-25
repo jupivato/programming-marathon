@@ -22,12 +22,12 @@ adicione `\input{capitulos/...}` em `apostila/main.tex` e marque o status aqui.
 
 | # | Arquivo `.tex` | Título | Status | Códigos (`codigos/`) |
 |---|----------------|--------|--------|----------------------|
-| 1 | `capitulos/fundamentos-teoricos.tex` | Fundamentos teóricos | ✅ | `formulas_teoria/combinatoria.cpp` |
+| 1 | `capitulos/fundamentos-teoricos.tex` | Conceitos Matemáticos e Fundamentos Lógicos | ✅ | `formulas_teoria/combinatoria.cpp` |
 |   | | | | `formulas_teoria/numeros.cpp` |
 |   | | | | `formulas_teoria/somas.cpp` |
 |   | | | | `formulas_teoria/geometria.cpp` |
 |   | | | | `formulas_teoria/grafos_probabilidade.cpp` |
-| 2 | `capitulos/cpp-utilitarios.tex` | C++ utilitários (STL) | ✅ | `cpp_utilitarios/template_tipos.cpp` |
+| 2 | `capitulos/cpp-utilitarios.tex` | Utilitários C++ | ✅ | `cpp_utilitarios/template_tipos.cpp` |
 |   | | | | `cpp_utilitarios/entrada_saida.cpp` |
 |   | | | | `cpp_utilitarios/vetor_detalhado.cpp` |
 |   | | | | `cpp_utilitarios/vetor_deque.cpp` |
@@ -54,7 +54,24 @@ adicione `\input{capitulos/...}` em `apostila/main.tex` e marque o status aqui.
 |   | | | | `algoritmos_avulsos/ordenacao/quick_sort.cpp` |
 |   | | | | `algoritmos_avulsos/ordenacao/heapsort.cpp` |
 |   | | | | `algoritmos_avulsos/ordenacao/counting_sort.cpp` |
-| 4 | `capitulos/tecnicas.tex` | Técnicas clássicas | ✅ | `algoritmos_avulsos/tecnico/io_utilidades.cpp` |
+| 4 | `capitulos/dp.tex` | Programação dinâmica | ✅ | `algoritmos_avulsos/dp/pd_1d_simples.cpp` |
+|   | | | | `algoritmos_avulsos/dp/kadane.cpp` |
+|   | | | | `algoritmos_avulsos/dp/knapsack_01.cpp` |
+|   | | | | `algoritmos_avulsos/dp/knapsack_01_1d.cpp` |
+|   | | | | `algoritmos_avulsos/dp/knapsack_ilimitada.cpp` |
+|   | | | | `algoritmos_avulsos/dp/subset_sum_bitmask.cpp` |
+|   | | | | `algoritmos_avulsos/dp/coin_change.cpp` |
+|   | | | | `algoritmos_avulsos/dp/coin_change_ways.cpp` |
+|   | | | | `algoritmos_avulsos/dp/grid_paths.cpp` |
+|   | | | | `algoritmos_avulsos/dp/lis.cpp` |
+|   | | | | `algoritmos_avulsos/dp/lis_n2.cpp` |
+|   | | | | `algoritmos_avulsos/dp/lis_on_tree.cpp` |
+|   | | | | `algoritmos_avulsos/dp/edit_distance.cpp` |
+|   | | | | `algoritmos_avulsos/dp/lcs.cpp` |
+|   | | | | `algoritmos_avulsos/dp/max_weight_independent_set.cpp` |
+|   | | | | `algoritmos_avulsos/dp/dp_arvore.cpp` |
+|   | | | | `algoritmos_avulsos/dp/digit_dp.cpp` |
+| 5 | `capitulos/tecnicas.tex` | Técnicas clássicas | ✅ | `algoritmos_avulsos/tecnico/io_utilidades.cpp` |
 |   | | | | `algoritmos_avulsos/tecnico/prefix_sum_1d.cpp` |
 |   | | | | `algoritmos_avulsos/tecnico/dois_ponteiros_ordenado.cpp` |
 |   | | | | `algoritmos_avulsos/tecnico/janela_soma_max_k.cpp` |
@@ -86,7 +103,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/estruturas-consulta.tex` |
 | Título | Estruturas: prefixo, BIT e segment tree |
-| Status | 📋 |
+| Status | ✅ |
 | Pasta | `codigos/algoritmos_avulsos/estruturas/` |
 
 | Arquivo `.cpp` | Tema |
@@ -105,7 +122,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/grafos-busca.tex` |
 | Título | Grafos: BFS, DFS e ordenação topológica |
-| Status | 📋 |
+| Status | ✅ |
 | Pasta | `codigos/algoritmos_avulsos/grafos/` |
 | Nota | O cap. teórico já aponta templates em `grafos/` |
 
@@ -124,7 +141,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/grafos-caminhos.tex` |
 | Título | Grafos: caminhos mínimos e árvore geradora mínima |
-| Status | 📋 |
+| Status | ✅ |
 | Pasta | `codigos/algoritmos_avulsos/grafos/` |
 
 | Arquivo `.cpp` | Tema |
@@ -145,7 +162,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/grafos-avancado.tex` |
 | Título | Grafos avançados |
-| Status | 📋 |
+| Status | ✅ |
 | Pasta | `codigos/algoritmos_avulsos/grafos/` |
 
 | Arquivo `.cpp` | Tema |
@@ -166,22 +183,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/dp.tex` |
 | Título | Programação dinâmica |
-| Status | 📋 |
-| Pasta | `codigos/algoritmos_avulsos/dp/` |
-
-| Arquivo `.cpp` | Tema |
-|---------------|------|
-| `knapsack_01.cpp` | Mochila 0/1 |
-| `knapsack_ilimitada.cpp` | Mochila ilimitada |
-| `coin_change.cpp` | Troco / moedas |
-| `grid_paths.cpp` | Caminhos em grade |
-| `lis.cpp` | LIS O(n log n) |
-| `lis_on_tree.cpp` | LIS em árvore |
-| `edit_distance.cpp` | Distância de edição |
-| `max_weight_independent_set.cpp` | Conjunto independente (árvore) |
-| `digit_dp.cpp` | DP em dígitos |
-
-*Opcional:* dividir em `dp-classica.tex` e `dp-avancada.tex` se o capítulo ficar longo.
+| Status | ✅ (ver tabela publicada acima) |
 
 ---
 
@@ -191,7 +193,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/strings.tex` |
 | Título | Algoritmos em strings |
-| Status | 📋 |
+| Status | ✅ |
 | Pasta | `codigos/algoritmos_avulsos/strings/` |
 
 | Arquivo `.cpp` | Tema |
@@ -212,7 +214,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/geometria-computacional.tex` |
 | Título | Geometria computacional 2D |
-| Status | 📋 |
+| Status | ✅ |
 | Pasta | `codigos/algoritmos_avulsos/geometria/` |
 
 | Arquivo `.cpp` | Tema |
@@ -231,7 +233,7 @@ Ordem sugerida de escrita (do mais acessível ao mais avançado).
 |-------|-------|
 | Arquivo | `capitulos/matematica.tex` |
 | Título | Matemática para maratona |
-| Status | 📋 |
+| Status | ✅ |
 | Pasta | `codigos/algoritmos_avulsos/matematica/` |
 
 | Subtema | Arquivos |
@@ -289,14 +291,14 @@ Um capítulo por edição ou por grupo de simulado. Status 📋 para todos.
 \input{capitulos/fundamentos-teoricos}
 \input{capitulos/cpp-utilitarios}
 \input{capitulos/ordenacao}
+\input{capitulos/dp}
 \input{capitulos/tecnicas}
 
-% --- Parte II — algoritmos ---
+% --- Parte II — algoritmos (grafos e demais na ordem planejada) ---
 \input{capitulos/estruturas-consulta}
 \input{capitulos/grafos-busca}
 \input{capitulos/grafos-caminhos}
 \input{capitulos/grafos-avancado}
-\input{capitulos/dp}
 \input{capitulos/strings}
 \input{capitulos/geometria-computacional}
 \input{capitulos/matematica}
@@ -319,7 +321,8 @@ Um capítulo por edição ou por grupo de simulado. Status 📋 para todos.
 | Provas / simulados / avulso | 25 | 0 |
 | `algoritmos_avulsos/ordenacao/` | 8 | 8 |
 | `algoritmos_avulsos/tecnico/` | 9 | 9 |
-| **Total em `codigos/`** | **127** | **36** |
+| `algoritmos_avulsos/dp/` | 17 | 17 |
+| **Total em `codigos/`** | **135** | **53** |
 
 ---
 
@@ -334,4 +337,4 @@ Um capítulo por edição ou por grupo de simulado. Status 📋 para todos.
 
 ---
 
-*Última revisão do inventário: maio/2026 — 4 capítulos publicados (teórico, C++, ordenação, técnicas), 8 capítulos de algoritmo planejados, 8 capítulos de prova planejados.*
+*Última revisão do inventário: maio/2026 — publicados: teórico, C++, ordenação, DP, técnicas, estruturas, grafos, strings, geometria computacional e matemática implementada; faltam capítulos de provas.*

@@ -5,12 +5,10 @@ void heapfy (int * vet, int n, int i)
     int esq = 2 * i + 1; // filho do lado esquerdo
     int dir = 2 * i + 2; // filho do lado direito
     int maior, aux;
-    //escolhe o maior valor entre os filhos esq e dir
-    maior = i;
+    maior = i; //escolhe o maior valor entre os filhos esq e dir
     if ((esq <n) && (vet[esq] > vet[maior])) maior = esq;
     if ((dir <n) && (vet[dir] > vet[maior])) maior = dir;
-    // se um dos filhos for maior que o pai, troca
-    if (maior != i)
+    if (maior != i)  // se um dos filhos for maior que o pai, troca
     {
         aux = vet[i];
         vet[i] = vet[maior];

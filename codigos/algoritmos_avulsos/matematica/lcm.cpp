@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int lmc(int m, int n){
-    return (m * n) / gcd(m, n);
+long long lcm_ll(long long a, long long b) {
+    if (a == 0 || b == 0) return 0;
+    return llabs(a / std::gcd(a, b) * b);
 }

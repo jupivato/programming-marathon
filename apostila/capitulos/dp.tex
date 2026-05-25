@@ -1,0 +1,491 @@
+\chapter{Programação Dinâmica}
+
+%------------------------------------------------------------------------------
+\section{DP 1D --- estados lineares}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Sequências em que a resposta do estado atual depende de poucos estados anteriores já calculados, como escadas, Fibonacci, caminhos lineares e decisões locais acumuladas.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema pede contar formas ou otimizar valor em uma sequência.
+  \item Cada posição depende de posições anteriores fixas, como $i-1$ e $i-2$.
+  \item A recursão direta repetiria muitos subproblemas.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Defina \texttt{dp[i]} como a resposta para o prefixo ou posição $i$. Inicialize os casos base e preencha os estados em ordem crescente, usando somente valores já conhecidos.
+
+\subsection{Complexidade Temporal}
+$O(n)$ para $n$ estados.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} De quantas formas é possível subir uma escada de $n$ degraus se cada passo avança 1 ou 2 degraus?
+
+\textbf{Exemplo:} $n = 5$ $\Rightarrow$ resposta $8$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/pd_1d_simples.cpp}
+
+%------------------------------------------------------------------------------
+\section{Kadane --- maior soma de subarray contíguo}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Vetores com números positivos e negativos em que se pede a maior soma de um trecho contíguo.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item A resposta deve ser um subarray, não uma subsequência.
+  \item Existem valores negativos que podem tornar ruim continuar o trecho atual.
+  \item É necessário resolver em tempo linear.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Mantenha a melhor soma que termina na posição atual e a melhor soma global. Em cada elemento, decida entre continuar o trecho anterior ou começar um novo trecho naquele elemento.
+
+\subsection{Complexidade Temporal}
+$O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado um vetor de inteiros, encontre a maior soma de um subarray contíguo.
+
+\textbf{Exemplo:} \texttt{\{-2, 1, -3, 4, -1, 2, 1, -5, 4\}} $\Rightarrow$ resposta $6$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/kadane.cpp}
+
+%------------------------------------------------------------------------------
+\section{Mochila 0/1 --- tabela 2D}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+$n$ itens com peso e valor, cada item podendo ser escolhido no máximo uma vez, com capacidade máxima $W$.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Cada item é único: pegar ou não pegar.
+  \item A capacidade $W$ é moderada.
+  \item É útil visualizar a decisão por item e por capacidade.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use \texttt{dp[i][w]} como o melhor valor usando os primeiros $i$ itens com capacidade $w$. Em cada célula, compare não pegar o item atual com pegá-lo, caso caiba.
+
+\subsection{Complexidade Temporal}
+$O(n \cdot W)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Com capacidade $W = 5$ e itens $(2,3)$, $(1,2)$, $(3,4)$, $(2,2)$, qual o maior valor possível sem estourar o peso?
+
+\textbf{Exemplo:} Itens A, B e D $\Rightarrow$ peso $5$, valor $7$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/knapsack_01.cpp}
+
+%------------------------------------------------------------------------------
+\section{Mochila 0/1 --- vetor 1D}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Mesmo padrão da mochila 0/1, mas com otimização de memória.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item A matriz $n \times W$ consome memória demais.
+  \item Só é necessário o valor ótimo final.
+  \item Cada item continua podendo ser usado no máximo uma vez.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use um vetor \texttt{dp[w]}. Para cada item, percorra as capacidades de $W$ para baixo, garantindo que o item atual não seja reutilizado na mesma rodada.
+
+\subsection{Complexidade Temporal}
+$O(n \cdot W)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Resolva a mochila 0/1 usando apenas um vetor de tamanho $W+1$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/knapsack_01_1d.cpp}
+
+%------------------------------------------------------------------------------
+\section{Mochila com itens ilimitados}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Tipos de item podem ser usados repetidamente, como moedas infinitas, cortes repetíveis ou compra de pacotes ilimitados.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Cada tipo de item pode aparecer várias vezes na solução.
+  \item O estado principal é a capacidade ou soma acumulada.
+  \item A ordem dos itens não importa para o valor ótimo.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use \texttt{dp[w]} como o melhor valor para capacidade $w$. Atualize capacidades em ordem crescente para permitir que o mesmo item contribua novamente.
+
+\subsection{Complexidade Temporal}
+$O(n \cdot W)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Maximize o valor de uma mochila de capacidade $W$ quando cada tipo de item pode ser repetido sem limite.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/knapsack_ilimitada.cpp}
+
+%------------------------------------------------------------------------------
+\section{Subset sum por bitmask}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Problemas de subconjuntos com $n$ pequeno, em que cada elemento pode entrar ou não entrar na solução.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item $n \leq 20$--$22$.
+  \item É preciso testar ou enumerar todos os subconjuntos.
+  \item Uma DP polinomial pelo valor da soma não é conveniente.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Cada máscara de bits representa um subconjunto. Percorra todas as máscaras e, para cada bit ligado, inclua o elemento correspondente no cálculo.
+
+\subsection{Complexidade Temporal}
+$O(n \cdot 2^n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado $n \leq 20$ e um alvo $S$, existe subconjunto dos $n$ números cuja soma é exatamente $S$?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/subset_sum_bitmask.cpp}
+
+%------------------------------------------------------------------------------
+\section{Troco --- mínimo de moedas}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Formar um valor $x$ com tipos de moeda disponíveis, minimizando a quantidade total de moedas.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item As moedas podem ser usadas mais de uma vez.
+  \item A resposta é o menor número de peças ou operações.
+  \item O valor alvo $x$ cabe como dimensão da DP.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Defina \texttt{valor[i]} como o mínimo de moedas para formar $i$. Para cada valor, tente terminar a solução com cada moeda possível.
+
+\subsection{Complexidade Temporal}
+$O(x \cdot m)$, com $m$ tipos de moeda.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Moedas $\{1, 3, 4\}$. Qual o menor número de moedas para formar o valor $10$?
+
+\textbf{Exemplo:} $4 + 3 + 3 = 10$ com $3$ moedas.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp[firstline=1,lastline=32]{algoritmos_avulsos/dp/coin_change.cpp}
+
+%------------------------------------------------------------------------------
+\section{Troco --- quantas maneiras}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Contar quantas combinações de moedas formam um valor alvo, sem distinguir ordens equivalentes.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item A pergunta é ``de quantas maneiras''.
+  \item As moedas podem ser usadas repetidamente.
+  \item Combinações com a mesma composição não devem ser contadas várias vezes por ordem.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use \texttt{ways[i]} como o número de formas de formar $i$. Percorra moedas por fora e valores por dentro para evitar contar permutações como formas diferentes.
+
+\subsection{Complexidade Temporal}
+$O(x \cdot m)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Com moedas $\{1, 2, 5\}$, de quantas maneiras distintas se forma o valor $5$?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/coin_change_ways.cpp}
+
+%------------------------------------------------------------------------------
+\section{Caminhos em grade}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Grades com células livres e bloqueadas em que se conta ou otimiza caminhos com movimentos restritos.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Os movimentos permitidos formam uma ordem acíclica, como direita e baixo.
+  \item A resposta de uma célula depende de vizinhas anteriores.
+  \item Obstáculos anulam caminhos em certas posições.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Defina \texttt{dp[i][j]} como a quantidade de caminhos até a célula $(i,j)$. Para células livres, some as contribuições da célula de cima e da esquerda.
+
+\subsection{Complexidade Temporal}
+$O(R \cdot C)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Em uma grade $R \times C$ com obstáculos \texttt{\#}, quantos caminhos só com movimentos para a direita e para baixo ligam $(0,0)$ a $(R-1,C-1)$?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/grid_paths.cpp}
+
+%------------------------------------------------------------------------------
+\section{LIS --- $O(n^2)$}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Encontrar a maior subsequência estritamente crescente em um vetor, com $n$ moderado.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item $n$ permite solução quadrática.
+  \item É necessário reconstruir a sequência com facilidade.
+  \item A relação entre elementos anteriores e o atual precisa ser explícita.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use \texttt{dp[i]} como o tamanho da maior subsequência crescente que termina em \texttt{arr[i]}. Para cada $i$, teste todos os $j < i$ com \texttt{arr[j] < arr[i]}.
+
+\subsection{Complexidade Temporal}
+$O(n^2)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} No vetor \texttt{[10, 9, 2, 5, 3, 7, 101, 18]}, qual o tamanho da maior subsequência crescente?
+
+\textbf{Exemplo:} \texttt{2, 3, 7, 18} $\Rightarrow$ tamanho $4$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/lis_n2.cpp}
+
+%------------------------------------------------------------------------------
+\section{LIS --- $O(n \log n)$}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Mesmo problema da LIS, mas com $n$ grande.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item $n$ exige solução melhor que $O(n^2)$.
+  \item Só o tamanho da LIS já resolve o problema.
+  \item A sequência pode ser processada da esquerda para a direita.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Mantenha \texttt{tails}, onde cada posição guarda o menor valor final possível para uma subsequência daquele comprimento. Use \texttt{lower\_bound} para substituir o primeiro final maior ou igual ao elemento atual.
+
+\subsection{Complexidade Temporal}
+$O(n \log n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado um vetor com até $10^5$ elementos, encontre o tamanho da maior subsequência estritamente crescente.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/lis.cpp}
+
+%------------------------------------------------------------------------------
+\section{LIS em árvore}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Valores nos nós de uma árvore, pedindo a maior subsequência crescente ao longo de caminhos da raiz até cada nó.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O estado depende do caminho atual da DFS.
+  \item A resposta precisa ser calculada para cada nó.
+  \item É necessário desfazer alterações ao voltar na recursão.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Faça DFS mantendo a estrutura \texttt{tails} da LIS do caminho atual. Ao entrar no nó, aplique a atualização; ao sair, restaure o valor anterior.
+
+\subsection{Complexidade Temporal}
+$O(n \log n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Em uma árvore enraizada, para cada nó $v$, qual o tamanho da maior subsequência crescente em algum caminho raiz$\rightarrow v$?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/lis_on_tree.cpp}
+
+%------------------------------------------------------------------------------
+\section{Distância de edição}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Duas strings e operações de inserção, remoção e substituição com custo definido.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O objetivo é transformar uma string em outra com custo mínimo.
+  \item A decisão depende de prefixos das duas strings.
+  \item Os tamanhos permitem uma tabela bidimensional.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use \texttt{dp[i][j]} para o menor custo entre os prefixos de tamanho $i$ e $j$. Caracteres iguais copiam a diagonal; diferentes usam $1 + \min$ entre substituir, inserir ou remover.
+
+\subsection{Complexidade Temporal}
+$O(|a| \cdot |b|)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Qual o custo mínimo para transformar \texttt{kitten} em \texttt{sitting}?
+
+\textbf{Exemplo:} Resposta $3$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp[firstline=1,lastline=31]{algoritmos_avulsos/dp/edit_distance.cpp}
+
+%------------------------------------------------------------------------------
+\section{LCS --- maior subsequência comum}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Duas sequências, pedindo a maior subsequência que aparece em ambas na mesma ordem.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Os elementos não precisam ser contíguos.
+  \item A resposta depende de prefixos das duas sequências.
+  \item É aceitável usar uma tabela $|a| \times |b|$.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use \texttt{dp[i][j]} como a LCS dos prefixos. Se os últimos elementos são iguais, some 1 à diagonal; caso contrário, pegue o máximo entre remover um elemento de uma das sequências.
+
+\subsection{Complexidade Temporal}
+$O(|a| \cdot |b|)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Qual o tamanho da maior subsequência comum entre \texttt{abcde} e \texttt{ace}?
+
+\textbf{Exemplo:} \texttt{ace} $\Rightarrow$ resposta $3$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/lcs.cpp}
+
+%------------------------------------------------------------------------------
+\section{Casa ladrão em fila}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Escolher elementos de uma sequência sem pegar dois adjacentes, maximizando a soma.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Há uma restrição de incompatibilidade entre vizinhos.
+  \item Cada posição tem decisão binária: pegar ou não pegar.
+  \item A melhor resposta até $i$ depende de $i-1$ e $i-2$.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Use \texttt{memo[i]} como a melhor soma nas primeiras $i$ casas. Compare não pegar a casa atual com pegá-la e somar a melhor resposta até duas posições antes.
+
+\subsection{Complexidade Temporal}
+$O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado \texttt{[2, 7, 9, 3, 1]}, qual a maior soma roubando casas sem pegar vizinhas consecutivas?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/max_weight_independent_set.cpp}
+
+%------------------------------------------------------------------------------
+\section{Casa ladrão em árvore}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Escolher nós de uma árvore sem escolher dois nós adjacentes, maximizando a soma dos pesos.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item A estrutura do problema é uma árvore.
+  \item Escolher um nó bloqueia seus filhos diretos.
+  \item A resposta de um nó combina respostas independentes dos filhos.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Faça DFS com dois estados por nó: \texttt{dpPega[v]} e \texttt{dpNaoPega[v]}. Se pega $v$, os filhos não podem ser pegos; se não pega, cada filho escolhe seu melhor estado.
+
+\subsection{Complexidade Temporal}
+$O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Em uma árvore com pesos nos nós, qual a maior soma de um conjunto independente?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp{algoritmos_avulsos/dp/dp_arvore.cpp}
+
+%------------------------------------------------------------------------------
+\section{Digit DP}
+%------------------------------------------------------------------------------
+
+\subsection{Padrão do Problema}
+Contar inteiros em um intervalo que obedecem regras sobre dígitos, como soma, resto, paridade ou presença de algum algarismo.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O intervalo $[A,B]$ é grande demais para iterar número por número.
+  \item A propriedade depende dos dígitos do número.
+  \item É possível representar a regra com poucos estados extras.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Monte o número dígito a dígito com memoização. A flag \texttt{tight} indica se o prefixo ainda está preso ao limite superior; a resposta em $[A,B]$ é \texttt{conta(B) - conta(A-1)}.
+
+\subsection{Complexidade Temporal}
+$O(\log B \cdot \text{tamanho do estado})$ por consulta.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Quantos inteiros entre $10$ e $100$ têm soma dos dígitos igual a $10$?
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircpp[firstline=1,lastline=71]{algoritmos_avulsos/dp/digit_dp.cpp}

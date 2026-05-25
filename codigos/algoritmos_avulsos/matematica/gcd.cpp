@@ -1,14 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// MDC - Algoritmo de Euclides - O(log(min(a, b)))
-int gcd(int a, int b) {
-    while (b) {
-        a %= b;
-        // Troca os valores de a e b
-        int temp = a;
+long long gcd_ll(long long a, long long b) {
+    a = llabs(a);
+    b = llabs(b);
+    while (b != 0) {
+        long long r = a % b;
         a = b;
-        b = temp;
+        b = r;
     }
     return a;
 }

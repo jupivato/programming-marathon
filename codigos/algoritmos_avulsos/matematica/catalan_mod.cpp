@@ -1,30 +1,37 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int MOD = 1e9 + 7;
-const int MAXN = 200005; // Precisa ser 2*N pois a formula pede (2n)!
+const long long MOD = 1000000007LL;
 
-long long fat[MAXN], inv_fat[MAXN ];
-
-// Pre -calculo de fatoriais e inversos modulares em O(N log MOD )
-// Rode essa funcao UMA VEZ na main ()
-void pre_computar () {
-    fat [0] = 1;
-    inv_fat [0] = 1;
-    for (int i = 1; i <MAXN; i++) {
-        fat[i] = (fat[i - 1] * i) % MOD;
+long long mod_pow(long long a, long long e) {
+    long long res = 1;
+    while (e > 0) {
+        if (e & 1LL) res = res * a % MOD;
+        a = a * a % MOD;
+        e >>= 1LL;
     }
-    // Assumindo que voce tem a sua funcao mod_inv_prime (a, m) do notebook
-    inv_fat[MAXN - 1] = mod_inv_prime (fat[MAXN - 1], MOD);
-    for (int i = MAXN - 2; i >= 1; i--) {
-        inv_fat[i] = (inv_fat[i + 1] * (i + 1)) % MOD;
-    }
+    return res;
 }
 
-// Calcula C_n = (2n)! / (n! * (n+1)!) % MOD em O(1)
-long long catalan_modular (int n) {
-    if (n <0) return 0;
-    long long num = fat[2 * n];
-    long long den = (inv_fat[n] * inv_fat[n + 1]) % MOD;
-    return (num * den) % MOD;
-}
+struct CatalanMod {
+    vector<long long> fact, inv_fact;
+
+    CatalanMod(int max_n) {
+        int n = 2 * max_n + 2;
+        fact.assign(n + 1, 1);
+        inv_fact.assign(n + 1, 1);
+
+        for (int i = 1; i <= n; i++) fact[i] = fact[i - 1] * i % MOD;
+        inv_fact[n] = mod_pow(fact[n], MOD - 2);
+        for (int i = n; i > 0; i--) inv_fact[i - 1] = inv_fact[i] * i % MOD;
+    }
+
+    long long comb(int n, int k) {
+        if (k < 0 || k > n) return 0;
+        return fact[n] * inv_fact[k] % MOD * inv_fact[n - k] % MOD;
+    }
+
+    long long catalan(int n) {
+        return comb(2 * n, n) * mod_pow(n + 1, MOD - 2) % MOD;
+    }
+};

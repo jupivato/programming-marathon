@@ -29,10 +29,3 @@ int levenshtein_distance(const string& a, const string& b) {
     // retorna a distancia de Levenshtein entre as duas strings
     return dp[n][m];
 }
-int main() {
-    string a, b;
-    cin>> a>> b;
-    // chama a funcao e imprime o resultado
-    cout <<levenshtein_distance(a, b) <<endl;
-    return 0;
-}

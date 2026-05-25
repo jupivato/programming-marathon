@@ -1,28 +1,34 @@
 #include <bits/stdc++.h>
-#define NMAX 20
 using namespace std;
-// matriz ampliada de coeficientes
-double mat[NMAX][NMAX+1]; // armazena a matriz ampliada (coeficientes + resultados)
-double sol[NMAX]; // armazena as soluções do sistema linear
-void elimination(int n){
-    double factor;
-    for (int i = 0; i <n - 1; i++){
-        for (int j = i+1; j <n; j++){
-            factor = mat[j][i]/mat[i][i]; // calcula o fator de eliminação
-            for (int k = 0; k <n + 1; k++){
-                mat[j][k] = mat[j][k] - factor*mat[i][k]; // elimina os elementos abaixo da
+
+const double EPS = 1e-9;
+
+// Recebe matriz aumentada A com n linhas e n+1 colunas.
+// Retorna vetor vazio quando nao ha solucao unica.
+vector<double> solve_linear_system(vector<vector<double>> A) {
+    int n = (int)A.size();
+
+    for (int col = 0; col < n; col++) {
+        int pivot = col;
+        for (int row = col + 1; row < n; row++) {
+            if (fabs(A[row][col]) > fabs(A[pivot][col])) pivot = row;
+        }
+        swap(A[col], A[pivot]);
+        if (fabs(A[col][col]) < EPS) return {};
+
+        for (int row = col + 1; row < n; row++) {
+            double factor = A[row][col] / A[col][col];
+            for (int j = col; j <= n; j++) {
+                A[row][j] -= factor * A[col][j];
             }
         }
     }
-}
-void solve(int n){
-    memset(sol, 0, sizeof(sol)); // inicializa as soluções como zero
-    double s = 0;
-    for (int l = n - 1; l >= 0; l--) {
-        s = 0;
-        for (int j = l; j <n; j++) {
-            s += sol[j]*mat[l][j]; // calcula a soma dos termos já resolvidos
-        }
-        sol[l] = (mat[l][n] - s) / mat[l][l]; // resolve a variável atual
+
+    vector<double> x(n);
+    for (int i = n - 1; i >= 0; i--) {
+        double rhs = A[i][n];
+        for (int j = i + 1; j < n; j++) rhs -= A[i][j] * x[j];
+        x[i] = rhs / A[i][i];
     }
+    return x;
 }

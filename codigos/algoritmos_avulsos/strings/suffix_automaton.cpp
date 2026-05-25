@@ -3,17 +3,17 @@ using namespace std;
 
 struct state {
     int len , link;
-    map<char , int > next; // ou array: int next [26];
+    map<char , int > next; // ou array: int next[26]
 };
 
-const int MAXLEN = 100000 + 10; // ajustar conforme necessário Estruturas de Dados
+const int MAXLEN = 100000 + 10; // ajustar conforme necessario
 state st[MAXLEN * 2];
 int sz , last;
 
 void sa_init () {
     st [0].len = 0;
     st [0].link = -1;
-    sz = 1; // começa com 1 (estado 0)
+    sz = 1; // comeca com 1 (estado 0)
     last = 0;
 }
 
@@ -38,7 +38,7 @@ void sa_extend(char c) {
             st[clone ].len = st[p].len + 1;
             st[clone ].next = st[q].next;
             st[clone ].link = st[q].link;
-            different substrings.while (p != -1 && st[p].next[c] == q) {
+            while (p != -1 && st[p].next[c] == q) {
                 st[p].next[c] = clone;
                 p = st[p].link;
             }
@@ -50,7 +50,7 @@ void sa_extend(char c) {
 }
 
 long long get_diff_strings (){
-    // Given a string S.You want to compute the number of
+    // Conta o numero de substrings distintas da string inserida.
     long long tot = 0;
     for(int i = 1; i <sz; i++) {
         tot += st[i].len - st[st[i].link ].len;
@@ -59,7 +59,8 @@ long long get_diff_strings (){
 }
 
 long long get_tot_len_diff_substings () {
-    // Given a string S.We want to compute the total length of all its various substrings.long long tot = 0;
+    // Soma os comprimentos de todas as substrings distintas.
+    long long tot = 0;
     for(int i = 1; i <sz; i++) {
         long long shortest = st[st[i].link ].len + 1;
         long long longest = st[i].len;
@@ -72,7 +73,8 @@ long long get_tot_len_diff_substings () {
 }
 
 string lcs (string S, string T) {
-    // Given two strings S and T.We have to find the longest common substring , i.e.such a string X that appears as a substring in S and also in T.sa_init ();
+    // Maior substring comum entre S e T.
+    sa_init ();
     for (int i = 0; i <S.size (); i++)
     sa_extend(S[i]);
 

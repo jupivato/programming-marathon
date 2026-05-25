@@ -1,26 +1,21 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-// Converte uma string ’num’ na base ’b’ para a base 10 ( decimal).long long to_decimal(const string& num , int b) {
-    long long result = 0;
-    long long power = 1;
+int value_of(char c) {
+    if ('0' <= c && c <= '9') return c - '0';
+    if ('A' <= c && c <= 'Z') return c - 'A' + 10;
+    if ('a' <= c && c <= 'z') return c - 'a' + 10;
+    return -1;
+}
 
-    // Itera pela string da direita para a esquerda.for (int i = num.length () - 1; i >= 0; i--) {
-        int digit_value;
-        if (num[i] >= ’0’ && num[i] <= ’9’) {
-            digit_value = num[i] - ’0’;
-        } else {
-            digit_value = num[i] - ’A’ + 10;
-        }
+long long to_decimal(const string& num, int base) {
+    if (base < 2 || base > 36) return -1;
 
-        if (digit_value >= b) {
-            // Dígito inválido para a base fornecida.
-            // Você pode tratar o erro aqui (ex: retornar -1).return -1;
-        }
-
-        result += digit_value * power;
-        power *= b;
+    long long ans = 0;
+    for (char c : num) {
+        int digit = value_of(c);
+        if (digit < 0 || digit >= base) return -1;
+        ans = ans * base + digit;
     }
-    return result;
+    return ans;
 }

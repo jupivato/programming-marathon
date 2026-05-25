@@ -1,162 +1,183 @@
 \chapter{Grafos II: Caminhos e Árvores}
 
-\section{Caminhos Mínimos}
+\section{Dijkstra}
 
-Um caminho mínimo entre dois vértices é o caminho com a menor soma de pesos das arestas. Esta é uma das aplicações mais importantes de algoritmos em grafos, usada em GPS, roteamento de rede, e muitos outros cenários.
-
-\subsection{Dijkstra}
-
-Dijkstra encontra o caminho mínimo de um vértice para todos os outros, \textbf{funcionando apenas com pesos não-negativos}. O algoritmo usa uma fila de prioridade e seleciona sempre o vértice com menor distância.
-
-\textbf{Complexidade:} $O((V + E) \log V)$ com heap binário.
+\subsection{Padrão do Problema}
+Caminhos mínimos a partir de uma única origem em grafo com pesos não negativos.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Encontrar o \textbf{caminho mais rápido} entre cidades (GPS, roteamento);
-  \item Quando todos os pesos são \textbf{não-negativos};
-  \item Quando precisa de \textbf{uma única origem} para todos os destinos.
+  \item Todos os pesos das arestas são $\geq 0$.
+  \item É preciso a menor distância de uma origem para vários destinos.
+  \item O grafo é grande demais para Floyd-Warshall.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Mantenha distâncias tentativas e uma fila de prioridade com o vértice de menor distância atual. Ao processar um vértice, relaxe suas arestas.
+
+\subsection{Complexidade Temporal}
+$O((V + E) \log V)$ com heap binário.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você está num ponto de uma cidade e quer saber a rota mais rápida para cada outro local. Dijkstra começa visitando as ruas mais rápidas primeiro, marca as distâncias mínimas, e continua até visitar todos os pontos.
+\textbf{Enunciado:} Dado um mapa de cidades com distâncias não negativas, calcule a menor distância da cidade $s$ para todas as outras.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/dijkstra.cpp}{Dijkstra}
 
-\subsection{Bellman-Ford}
+\section{Bellman-Ford}
 
-Bellman-Ford também encontra caminhos mínimos, mas funciona com \textbf{arestas com pesos negativos}. O diferencial é que detecta ciclos de peso negativo, que tornariam o problema indefinido.
-
-\textbf{Complexidade:} $O(VE)$, mais lento que Dijkstra, mas mais versátil.
+\subsection{Padrão do Problema}
+Caminhos mínimos com possibilidade de arestas negativas e detecção de ciclos negativos.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Quando há \textbf{arestas com pesos negativos};
-  \item Quando precisa \textbf{detectar ciclos negativos} (arbitragem, feedback loops);
-  \item Quando $V$ é pequeno (algoritmo é $O(VE)$).
+  \item Existem pesos negativos.
+  \item É necessário detectar ciclo negativo alcançável.
+  \item O tamanho do grafo permite $O(VE)$.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Relaxe todas as arestas por $V-1$ rodadas. Uma rodada extra que ainda melhora alguma distância indica ciclo negativo.
+
+\subsection{Complexidade Temporal}
+$O(VE)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você está trocando moedas: Real → Dólar → Euro → Real. Se houver uma sequência de trocas que resulta em ganho (ciclo negativo), você lucra infinitamente. Bellman-Ford detecta isso.
+\textbf{Enunciado:} Em uma rede de trocas com custos positivos e negativos, determine menores custos a partir da origem e detecte se há ciclo de ganho infinito.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/bellman_ford.cpp}{Bellman-Ford}
 
-\subsection{Floyd-Warshall}
+\section{Floyd-Warshall}
 
-Floyd-Warshall encontra o caminho mínimo entre \textbf{todos os pares de vértices}. Funciona com pesos negativos (mas sem ciclos negativos) e é simples de implementar.
-
-\textbf{Complexidade:} $O(V^3)$, adequado para $V \leq 500$ aproximadamente.
+\subsection{Padrão do Problema}
+Caminhos mínimos entre todos os pares de vértices em grafo pequeno.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Quando precisa \textbf{de todos os pares}, não só de uma origem;
-  \item Quando $V$ é pequeno (cabe em memória e $V^3$ é aceitável);
-  \item Quando tem pesos negativos mas sem ciclos.
+  \item É preciso responder distância entre qualquer par.
+  \item $V$ é pequeno o suficiente para $O(V^3)$.
+  \item Pode haver peso negativo, mas não ciclo negativo.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Use \texttt{dist[i][j]} e tente melhorar cada par usando um vértice intermediário $k$. A cada rodada, caminhos podem passar pelos vértices já liberados.
+
+\subsection{Complexidade Temporal}
+$O(V^3)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você tem 10 cidades e quer saber o tempo de viagem mais rápido entre cada par de cidades (não apenas de uma origem). Floyd-Warshall calcula tudo junto: distância(cidade1, cidade2), distância(cidade1, cidade3), etc.
+\textbf{Enunciado:} Dadas até 400 cidades, responda a menor distância entre qualquer par de cidades.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/floyd_warshall.cpp}{Floyd-Warshall}
 
-\section{Árvores Geradoras Mínimas (MST)}
+\section{Kruskal}
 
-Uma árvore geradora mínima é um subconjunto de arestas que conecta todos os vértices com peso total mínimo. Diferente de caminhos mínimos, não tem origem específica --- é sobre conectar todo o grafo com custo mínimo.
-
-\textbf{Aplicações:} design de redes, cabos elétricos, estradas entre cidades, etc.
-
-\subsection{Kruskal}
-
-Kruskal usa uma estratégia gulosa: ordena todas as arestas por peso e adiciona a menor aresta que não cria ciclo (usando Union-Find para detectar ciclos).
-
-\textbf{Complexidade:} $O(E \log E)$.
+\subsection{Padrão do Problema}
+Conectar todos os vértices com custo total mínimo, escolhendo arestas sem formar ciclo.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Conectar todos os pontos com \textbf{custo mínimo};
-  \item Grafos \textbf{esparsos} (poucas arestas);
-  \item Quando é fácil ordenar as arestas.
+  \item O problema pede árvore geradora mínima.
+  \item As arestas estão disponíveis como lista.
+  \item O grafo é esparso ou ordenar arestas é conveniente.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Ordene as arestas por peso. Percorra da menor para a maior e adicione a aresta se ela conecta componentes diferentes, usando DSU.
+
+\subsection{Complexidade Temporal}
+$O(E \log E)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você precisa colocar cabos de fibra óptica em 8 cidades com custo mínimo. Kruskal começa pelos cabos mais baratos, adiciona um a um desde que não forme ciclo, até conectar todas as cidades.
+\textbf{Enunciado:} Conecte todas as cidades com cabos de menor custo total, sem precisar manter ciclos.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/kruskal.cpp}{Kruskal}
 
-\subsection{Prim}
+\section{Prim}
 
-Prim começa de um vértice e cresce a árvore adicionando sempre a menor aresta que conecta um vértice na árvore a um fora dela.
-
-\textbf{Complexidade:} $O((V + E) \log V)$ com heap.
+\subsection{Padrão do Problema}
+Construir uma árvore geradora mínima expandindo uma componente a partir de um vértice inicial.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Conectar todos os pontos com \textbf{custo mínimo};
-  \item Grafos \textbf{densos} (muitas arestas);
-  \item Quando já tem um \textbf{vértice inicial} específico.
+  \item O problema pede conectar todos os vértices com custo mínimo.
+  \item O grafo está em lista de adjacência ponderada.
+  \item É natural crescer a solução a partir de um vértice.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Mantenha uma fila de prioridade com arestas que saem da árvore atual. Sempre escolha a menor aresta que leva a um vértice ainda fora da árvore.
+
+\subsection{Complexidade Temporal}
+$O((V + E) \log V)$ com heap.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você está em um ponto e precisa conectar sua rede a todos os outros pontos com custo mínimo. Prim começa do seu ponto, adiciona o mais barato vizinho, depois do novo conjunto adiciona o mais barato vizinho externo, e repete até tudo conectado.
+\textbf{Enunciado:} A partir de uma estação inicial, conecte todos os pontos de uma rede usando custo total mínimo.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/prim.cpp}{Prim}
-
-\subsection{Diferença: Kruskal vs Prim}
-
-\begin{itemize}[nosep]
-  \item \textbf{Kruskal:} ordena arestas, usa Union-Find, melhor para grafos esparsos;
-  \item \textbf{Prim:} cresce de um vértice, usa heap, melhor para grafos densos.
-\end{itemize}
 
 \section{Union-Find (DSU)}
 
-Union-Find é uma estrutura de dados que mantém uma coleção de conjuntos disjuntos. Oferece duas operações principais:
-\begin{itemize}[nosep]
-  \item \textbf{find(x):} encontra o representante do conjunto contendo x;
-  \item \textbf{unite(a, b):} une os conjuntos contendo a e b.
-\end{itemize}
-
-\textbf{Complexidade:} praticamente $O(1)$ com path compression e union by size.
+\subsection{Padrão do Problema}
+Manter componentes disjuntas sob operações de união e consulta de conectividade.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Detectar \textbf{ciclos} adicionando arestas uma a uma;
-  \item Verificar se \textbf{dois elementos estão conectados};
-  \item Kruskal usa Union-Find para saber quando uma aresta fecharia ciclo.
+  \item É preciso saber se dois elementos estão no mesmo grupo.
+  \item Arestas são adicionadas dinamicamente.
+  \item Algoritmos como Kruskal precisam detectar ciclos.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Cada conjunto tem um representante. \texttt{find} encontra esse representante com compressão de caminho; \texttt{unite} junta dois conjuntos por tamanho ou rank.
+
+\subsection{Complexidade Temporal}
+$O(\alpha(n))$ amortizado por operação, praticamente constante.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você tem 5 amigos em grupos separados. Quando dois amigos se tornam amigos, seus grupos se unem. Union-Find rastreia quem está em qual grupo e detecta quando todos ficariam no mesmo grupo (ou quando alguém já está no grupo antes de unir).
+\textbf{Enunciado:} Receba uniões entre pessoas e responda se duas pessoas já pertencem ao mesmo grupo.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/union_find.cpp}{Union-Find}
 
-\section{LCA (Lowest Common Ancestor)}
+\section{LCA}
 
-Em uma árvore, o Lowest Common Ancestor (Ancestral Comum Mais Baixo) de dois vértices é o vértice mais profundo que é ancestral de ambos. LCA é útil para resolver muitos problemas em árvores.
-
-\textbf{Complexidade:} $O(n \log n)$ pré-processamento, $O(\log n)$ por consulta com binary lifting.
+\subsection{Padrão do Problema}
+Consultas de ancestral comum mais baixo em uma árvore enraizada.
 
 \subsection{Quando usar}
-
 \begin{itemize}[nosep]
-  \item Encontrar \textbf{distância entre dois nós} numa árvore;
-  \item Resolver \textbf{consultas de ancestralidade} rápido;
-  \item Problemas com \textbf{caminho em árvore}.
+  \item É preciso responder muitas consultas entre pares de nós.
+  \item O problema envolve distância ou caminho em árvore.
+  \item A árvore é fixa após o pré-processamento.
 \end{itemize}
 
+\subsection{Explicação do Algoritmo}
+Com binary lifting, pré-calcule ancestrais em potências de dois. Para consultar, suba o nó mais profundo e depois suba ambos até antes do LCA.
+
+\subsection{Complexidade Temporal}
+Pré-processamento $O(n \log n)$ e consulta $O(\log n)$.
+
+\subsection{Exemplo de Enunciado}
 \begin{exemplodiabox}
-Você tem uma árvore genealógica. Para saber se pessoa A é descendente de pessoa B, você encontra o LCA deles. Se o LCA é B, então B é ancestral de A.
+\textbf{Enunciado:} Em uma árvore genealógica, responda várias consultas sobre o ancestral comum mais baixo de dois nós.
 \end{exemplodiabox}
 
+\subsection{Código}
 \incluircppcaption{algoritmos_avulsos/grafos/lca.cpp}{LCA}

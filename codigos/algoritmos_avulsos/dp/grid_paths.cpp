@@ -12,7 +12,7 @@ int main ()
         for(int j=0;j<w;j++){
             char aux;
             cin>> aux;
-            if(aux == ’.’) mat[i][j] = 1;
+            if(aux == '.') mat[i][j] = 1;
             else mat[i][j] = 0;
         }
     }

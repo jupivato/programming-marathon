@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,oneside]{book}
+\documentclass[10pt,a4paper,oneside]{book}
 
 \input{config/preamble}
 
@@ -9,7 +9,18 @@
 \begin{titlepage}
   \centering
   \vfill
-  {\Huge\bfseries Apostila de Maratona de Programação\par}
+  
+  % Linha decorativa superior centralizada
+  \noindent\makebox[\textwidth]{\rule{12cm}{1.5pt}}
+  \vspace*{0.8cm}
+
+  % Título Principal em Destaque
+  {\Huge\bfseries Apostila de Maratona\\ de Programação\par}
+  
+  \vspace*{0.8cm}
+  % Linha decorativa inferior centralizada
+  \noindent\makebox[\textwidth]{\rule{12cm}{1.5pt}}
+
   \vfill
 \end{titlepage}
 \pagestyle{fancy}
@@ -21,11 +32,15 @@
 \input{capitulos/fundamentos-teoricos}
 \input{capitulos/cpp-utilitarios}
 \input{capitulos/ordenacao}
+\input{capitulos/dp}
 \input{capitulos/tecnicas}
 \input{capitulos/estruturas-consulta}
 \input{capitulos/grafos-busca}
 \input{capitulos/grafos-caminhos}
 \input{capitulos/grafos-avancado}
+\input{capitulos/strings}
+\input{capitulos/geometria-computacional}
+\input{capitulos/matematica}
 % \input{capitulos/template-capitulo}  % capítulos com código
 
 \end{document}

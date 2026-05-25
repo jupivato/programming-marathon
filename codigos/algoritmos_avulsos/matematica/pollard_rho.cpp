@@ -1,112 +1,85 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-using ull = unsigned long long;
+using u64 = unsigned long long;
+using u128 = __uint128_t;
 
-// Multiplicação em O(log n) para evitar overflow em 64 bits
-ull mul_mod(ull a, ull b, ull m) { Geometria 2D
-    ull res = 0;
-    a %= m;
-    while (b) {
-        if (b & 1) res = (res + a) % m;
-        a = (a + a) % m;
-        b>>= 1;
+u64 mul_mod(u64 a, u64 b, u64 mod) {
+    return (u128)a * b % mod;
+}
+
+u64 pow_mod(u64 a, u64 e, u64 mod) {
+    u64 res = 1;
+    while (e > 0) {
+        if (e & 1ULL) res = mul_mod(res, a, mod);
+        a = mul_mod(a, a, mod);
+        e >>= 1ULL;
     }
     return res;
 }
 
-// Exponenciação binária usando a nossa multiplicação segura
-ull binpower(ull base , ull e, ull mod) {
-    ull result = 1;
-    base %= mod;
-    while (e) {
-        if (e & 1) result = mul_mod(result , base , mod);
-        base = mul_mod(base , base , mod);
-        e>>= 1;
+bool is_prime(u64 n) {
+    if (n < 2) return false;
+    for (u64 p : {2ULL, 3ULL, 5ULL, 7ULL, 11ULL, 13ULL, 17ULL, 19ULL, 23ULL, 29ULL, 31ULL, 37ULL}) {
+        if (n % p == 0) return n == p;
     }
-    return result;
-}
 
-bool miller_rabin(ull n) {
-    if (n <2) return false;
-    if (n == 2 || n == 3) return true;
-    if (n % 2 == 0) return false;
-
-    ull d = n - 1;
-    int s = 0;
-    while (d % 2 == 0) {
-        d /= 2;
+    u64 d = n - 1, s = 0;
+    while ((d & 1ULL) == 0) {
+        d >>= 1ULL;
         s++;
     }
 
-    static const ull bases [] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37};
-    for (ull a : bases) {
-        if (n <= a) break;
-        ull x = binpower(a, d, n);
+    for (u64 a : {2ULL, 3ULL, 5ULL, 7ULL, 11ULL, 13ULL, 17ULL, 19ULL, 23ULL, 29ULL, 31ULL, 37ULL}) {
+        if (a >= n) continue;
+        u64 x = pow_mod(a, d, n);
         if (x == 1 || x == n - 1) continue;
 
-        bool composite = true;
-        for (int r = 1; r <s; r++) {
+        bool witness = true;
+        for (u64 r = 1; r < s; r++) {
             x = mul_mod(x, x, n);
             if (x == n - 1) {
-                composite = false;
+                witness = false;
                 break;
             }
         }
-        if (composite) return false;
+        if (witness) return false;
     }
     return true;
 }
 
-ull pollard_rho(ull n) {
+u64 pollard_rho(u64 n) {
     if (n % 2 == 0) return 2;
-    if (miller_rabin(n)) return n;
+    if (is_prime(n)) return n;
 
-    ull x = 2, y = 2, d = 1, c = 1;
+    static mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+    while (true) {
+        u64 c = uniform_int_distribution<u64>(1, n - 1)(rng);
+        u64 x = uniform_int_distribution<u64>(0, n - 1)(rng);
+        u64 y = x;
+        u64 d = 1;
 
-    // f(x) = (x^2 + c) mod n usando mul_mod
-    auto f = [&]( ull x, ull n, ull c) {
-        return (mul_mod(x, x, n) + c) % n;
-    };
+        auto f = [&](u64 v) {
+            return (mul_mod(v, v, n) + c) % n;
+        };
 
-    while (d == 1) {
-        x = f(x, n, c);
-        y = f(f(y, n, c), n, c);
-        ull diff = x > y ? x - y : y - x;
-        d = std::gcd(diff , n);
-
-        if (d == n) {
-            x = rand () % (n - 2) + 2;
-            y = x;
-            c = rand () % (n - 1) + 1;
-            d = 1;
+        while (d == 1) {
+            x = f(x);
+            y = f(f(y));
+            u64 diff = x > y ? x - y : y - x;
+            d = gcd(diff, n);
         }
+        if (d != n) return d;
     }
-    return d;
 }
 
-void factorize(ull n, map<ull , int >& factors) {
+void factor(u64 n, map<u64, int>& factors) {
     if (n == 1) return;
-    if (miller_rabin(n)) {
+    if (is_prime(n)) {
         factors[n]++;
         return;
     }
-    ull divisor = pollard_rho(n);
-    factorize(divisor , factors);
-    factorize(n / divisor , factors);
-}
-
-int main () {
-
-    ull n = 1000000000000000003 ULL;
-
-    map<ull , int > factors;
-    factorize(n, factors);
-
-    cout <<"Fatores de " <<n <<":\n";
-    for (auto const& [prime , count] : factors) {
-        cout <<prime <<"^" <<count <<"\n";
-    }
-
-    return 0;
+    u64 d = pollard_rho(n);
+    factor(d, factors);
+    factor(n / d, factors);
 }

@@ -1,0 +1,150 @@
+\chapter{Geometria Computacional 2D}
+
+%==============================================================================
+\section{Template 2D}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Problemas com pontos, vetores, segmentos, orientação, distância e interseção no plano.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O enunciado trabalha com coordenadas no plano.
+  \item É preciso decidir se três pontos fazem curva à esquerda, à direita ou são colineares.
+  \item Há consultas sobre segmentos, distâncias ou interseções.
+  \item Comparações com \texttt{double} precisam de tolerância.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+O template centraliza operações geométricas básicas: produto escalar, produto vetorial, orientação \texttt{ccw}, teste de ponto em segmento, interseção de segmentos e distância de ponto a segmento.
+
+\subsection{Complexidade Temporal}
+$O(1)$ por operação geométrica básica.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dados dois segmentos $AB$ e $CD$, determine se eles se intersectam.
+
+\textbf{Exemplo:} Se os segmentos cruzam em algum ponto ou compartilham extremidade, a resposta é sim.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/geometria/template_2d.cpp}{Template básico de geometria 2D}
+
+%==============================================================================
+\section{Ângulo entre vetores}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Calcular o ângulo formado por três pontos ou comparar direção entre dois vetores.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema pede ângulo entre segmentos.
+  \item É necessário saber a rotação de um vetor para outro.
+  \item Produto escalar e produto vetorial descrevem a relação entre direções.
+  \item A resposta pode ser dada em radianos ou convertida para graus.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Para o ângulo $PQR$, forme os vetores $\overrightarrow{QP}$ e $\overrightarrow{QR}$. Use \texttt{atan2(cross, dot)} para obter o ângulo orientado com estabilidade numérica.
+
+\subsection{Complexidade Temporal}
+$O(1)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dados três pontos $P$, $Q$ e $R$, calcule o ângulo formado no vértice $Q$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/geometria/angulo_vetores.cpp}{Ângulo entre vetores}
+
+%==============================================================================
+\section{Área de polígono}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Calcular a área de um polígono simples a partir dos vértices em ordem.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O enunciado dá os vértices de um polígono no plano.
+  \item É preciso calcular área sem triangular manualmente.
+  \item Os vértices estão em ordem horária ou anti-horária.
+  \item O polígono pode ser convexo ou côncavo, desde que simples.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+A fórmula de Shoelace soma os produtos vetoriais de vértices consecutivos. O valor absoluto da soma dividido por 2 é a área do polígono.
+
+\subsection{Complexidade Temporal}
+$O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado um terreno representado por $n$ vértices em ordem, calcule sua área.
+
+\textbf{Exemplo:} Um retângulo com lados 3 e 4 tem área 12.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/geometria/area_poligono.cpp}{Área de polígono}
+
+%==============================================================================
+\section{Fecho convexo}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Encontrar o menor polígono convexo que contém todos os pontos dados.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema pede a borda externa de um conjunto de pontos.
+  \item É preciso descartar pontos internos.
+  \item A solução depende de ordenar pontos e manter apenas curvas válidas.
+  \item Aplicações envolvem casco, cerca, contorno ou envoltória convexa.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+O algoritmo de monotonic chain ordena os pontos e constrói duas partes do fecho: inferior e superior. Enquanto o último ponto cria uma curva inválida, ele é removido da pilha.
+
+\subsection{Complexidade Temporal}
+$O(n \log n)$ por causa da ordenação.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dados pontos de postes em um campo, encontre o contorno convexo mínimo que cerca todos eles.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/geometria/convex_hull.cpp}{Fecho convexo}
+
+%==============================================================================
+\section{Par de pontos mais próximo}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Encontrar a menor distância entre dois pontos em um conjunto grande.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Há muitos pontos e testar todos os pares seria lento.
+  \item O problema pede menor distância euclidiana.
+  \item A solução $O(n^2)$ não cabe.
+  \item Os pontos podem ser ordenados por coordenada.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Divida os pontos pela coordenada $x$, resolva recursivamente cada metade e depois teste apenas pontos próximos da linha central. Ordenar por $y$ na combinação limita a quantidade de comparações locais.
+
+\subsection{Complexidade Temporal}
+$O(n \log n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dadas as coordenadas de $n$ antenas, encontre a menor distância entre duas antenas distintas.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/geometria/closest_pair.cpp}{Par de pontos mais próximo}

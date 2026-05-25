@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Constantes seguras (Módulos primos grandes e bases ímpares)
+// Constantes seguras: modulos primos grandes e bases impares
 const long long MOD1 = 1e9 + 7;
 const long long MOD2 = 1e9 + 9;
 const long long BASE1 = 313;
@@ -12,7 +12,7 @@ struct StringHash {
     vector<long long > p1 , p2;
     int n;
 
-    // Construtor: pré-calcula os prefixos e as potências em O( N)
+    // Construtor: pre-calcula os prefixos e as potencias em O(n)
     StringHash(const string& s) {
         n = s.size ();
         h1.assign(n + 1, 0);
@@ -29,7 +29,7 @@ struct StringHash {
         }
     }
 
-    // Retorna o hash da substring s[L...R] (0- indexado) em O (1)
+    // Retorna o hash da substring s[L...R] (0-indexado) em O(1)
     pair<long long , long long > get_hash(int L, int R) {
         long long hash1 = (h1[R + 1] - (h1[L] * p1[R - L + 1]) % MOD1 + MOD1) % MOD1;
         long long hash2 = (h2[R + 1] - (h2[L] * p2[R - L + 1]) % MOD2 + MOD2) % MOD2;
@@ -47,7 +47,7 @@ int main () {
     auto hash_meio = sh.get_hash (7, 9); // "abr"
 
     if (hash_prefixo == hash_meio) {
-        cout <<"As substrings sao iguais !" <<’\n ’;
+        cout << "As substrings sao iguais!\n";
     }
     return 0;
 }

@@ -1,0 +1,211 @@
+\chapter{Algoritmos em Strings}
+
+%==============================================================================
+\section{Hash de strings}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Comparar substrings rapidamente, detectar repetições ou usar strings como estados sem comparar caractere por caractere.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item Há muitas consultas perguntando se duas substrings são iguais.
+  \item É preciso testar padrões, prefixos, sufixos ou repetições em uma string grande.
+  \item Uma comparação direta de substrings ficaria cara demais.
+  \item Probabilidade pequena de colisão é aceitável, especialmente com hash duplo.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Pré-calcule hashes de prefixos e potências da base. O hash de qualquer substring é obtido em $O(1)$ removendo a contribuição do prefixo anterior e ajustando pelo tamanho.
+
+\subsection{Complexidade Temporal}
+Pré-processamento $O(n)$ e consulta $O(1)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dada uma string $s$ e várias consultas $(l_1,r_1,l_2,r_2)$, diga se as duas substrings indicadas são iguais.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/hash.cpp}{Hash duplo de strings}
+
+%==============================================================================
+\section{Função de prefixo (LPS)}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Calcular, para cada posição, o maior prefixo próprio da string que também é sufixo do prefixo atual.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema envolve bordas de uma string.
+  \item É preciso preparar a string para KMP.
+  \item O enunciado pede períodos, prefixos que também são sufixos ou repetições.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+A função de prefixo mantém o tamanho da melhor borda até a posição anterior. Quando o próximo caractere não encaixa, volta usando valores já calculados até encontrar uma borda menor válida.
+
+\subsection{Complexidade Temporal}
+$O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Para cada prefixo de uma string, calcule o tamanho do maior prefixo próprio que também é sufixo.
+
+\textbf{Exemplo:} Em \texttt{ababaca}, a informação de bordas permite continuar buscas sem voltar no texto.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/kmp_lps.cpp}{Função de prefixo}
+
+%==============================================================================
+\section{KMP}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Encontrar todas as ocorrências de um padrão dentro de um texto.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item É necessário buscar um padrão exato em um texto.
+  \item O texto e o padrão podem ser grandes.
+  \item Uma busca ingênua $O(nm)$ pode estourar o tempo.
+  \item O problema pede todas as posições de ocorrência.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+KMP usa a função de prefixo do padrão para saber quanto do casamento pode ser reaproveitado após uma falha. Assim, o ponteiro do texto nunca volta.
+
+\subsection{Complexidade Temporal}
+$O(n + m)$, com $n$ tamanho do texto e $m$ tamanho do padrão.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado um texto e uma palavra, imprima todos os índices em que a palavra aparece no texto.
+
+\textbf{Exemplo:} Texto \texttt{ababa}, padrão \texttt{aba} $\Rightarrow$ ocorrências em $0$ e $2$.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/kmp.cpp}{KMP}
+
+%==============================================================================
+\section{Rabin-Karp}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Buscar padrões por hash, especialmente quando há muitas comparações de substrings de mesmo tamanho.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item É preciso procurar um padrão em um texto usando rolling hash.
+  \item Há muitas substrings candidatas do mesmo tamanho.
+  \item O risco de colisão é aceitável ou pode ser reduzido com hash duplo.
+  \item O problema combina busca de padrão com outras comparações por hash.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Calcule o hash do padrão e hashes de prefixos do texto. Para cada janela do tamanho do padrão, compare o hash da janela com o hash do padrão ajustado pela potência correspondente.
+
+\subsection{Complexidade Temporal}
+$O(n + m)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dado um padrão $p$ e um texto $t$, encontre todas as posições em que $p$ aparece em $t$ usando hashing.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/rabin_karp.cpp}{Rabin-Karp}
+
+%==============================================================================
+\section{Manacher}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Encontrar palíndromos em uma string, calculando o maior raio palindrômico em cada centro.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema pede maior substring palindrômica.
+  \item É necessário contar ou consultar palíndromos por centro.
+  \item Uma expansão de centro $O(n^2)$ é lenta demais.
+  \item A string tem tamanho grande.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Manacher reaproveita informações do maior palíndromo conhecido à direita. Para cada centro, inicia com um raio mínimo espelhado e expande apenas quando necessário.
+
+\subsection{Complexidade Temporal}
+$O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dada uma string, encontre o tamanho da maior substring palindrômica.
+
+\textbf{Exemplo:} Em \texttt{babad}, uma resposta possível é \texttt{bab}.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/manacher.cpp}{Manacher}
+
+%==============================================================================
+\section{Trie}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Guardar várias palavras e responder consultas por prefixo.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item O problema envolve dicionário de palavras.
+  \item Há consultas de prefixo, inserção ou remoção.
+  \item Comparar todas as palavras a cada consulta seria lento.
+  \item O alfabeto é pequeno ou controlado, como letras minúsculas.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+Trie é uma árvore em que cada aresta representa um caractere. Palavras com prefixo comum compartilham o mesmo caminho inicial, permitindo buscar ou inserir em tempo proporcional ao tamanho da palavra.
+
+\subsection{Complexidade Temporal}
+$O(L)$ por operação, com $L$ tamanho da palavra consultada.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Mantenha um conjunto de palavras e responda quantas palavras começam com determinado prefixo.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/trie.cpp}{Trie}
+
+%==============================================================================
+\section{Autômato de sufixos}
+%==============================================================================
+
+\subsection{Padrão do Problema}
+Representar todas as substrings de uma string em uma estrutura compacta.
+
+\subsection{Quando usar}
+\begin{itemize}[nosep]
+  \item É preciso contar substrings distintas.
+  \item O problema pede maior substring comum entre duas strings.
+  \item Há várias consultas sobre substrings de uma string fixa.
+  \item Suffix array ou hashing ficariam menos diretos para a operação pedida.
+\end{itemize}
+
+\subsection{Explicação do Algoritmo}
+O autômato de sufixos mantém estados que representam conjuntos de substrings com mesmos finais possíveis. Ao inserir cada caractere, cria ou clona estados para preservar as transições e links de sufixo.
+
+\subsection{Complexidade Temporal}
+Construção $O(n \log \sigma)$ usando \texttt{map}; com array para alfabeto fixo, $O(n)$.
+
+\subsection{Exemplo de Enunciado}
+\begin{exemplodiabox}
+\textbf{Enunciado:} Dada uma string $s$, conte quantas substrings distintas ela possui.
+
+\textbf{Exemplo:} Para \texttt{ababa}, o autômato permite contar todas as substrings diferentes em tempo linear após a construção.
+\end{exemplodiabox}
+
+\subsection{Código}
+\incluircppcaption{algoritmos_avulsos/strings/suffix_automaton.cpp}{Autômato de sufixos}

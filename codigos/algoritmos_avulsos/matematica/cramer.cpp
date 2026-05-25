@@ -1,46 +1,41 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-double A[20][20] ,b[20],X[20];
-// Calcula o determinante sem comprometer a matriz O(n^3)
-double det(int n){
-    double mat[n][n],res =1;
-    int mxI;
-    for(int i=0;i<n;i++)
-    for(int j=0;j<n;j++) mat[i][j]=A[i][j];
-    for(int i=0;i<n;i++){
-        mxI=i;
-        for(int j=i+1;j<n;j++){
-            if(mat[j][i]>mat[mxI][i]) mxI=j;
+const double EPS = 1e-9;
+using Matrix = vector<vector<double>>;
+
+double determinant(Matrix A) {
+    int n = (int)A.size();
+    double det = 1.0;
+    for (int col = 0; col < n; col++) {
+        int pivot = col;
+        for (int row = col + 1; row < n; row++) {
+            if (fabs(A[row][col]) > fabs(A[pivot][col])) pivot = row;
         }
-        if(mxI!=i){
-            for(int j=0;j<n;j++){
-                double aux=mat[mxI][j];
-                mat[mxI][j]=mat[i][j];
-                mat[i][j]=aux;
-            }
-            res=-res;
+        if (fabs(A[pivot][col]) < EPS) return 0.0;
+        if (pivot != col) {
+            swap(A[pivot], A[col]);
+            det = -det;
         }
-        if(abs(mat[i][i]) <1e -12) return NAN;
-        for(int j=i+1;j<n;j++){
-            double F=-mat[j][i]/mat[i][i];
-            for(int k=0;k<n;k++) mat[j][k]+=F*mat[i][k];
+        det *= A[col][col];
+        for (int row = col + 1; row < n; row++) {
+            double factor = A[row][col] / A[col][col];
+            for (int j = col; j < n; j++) A[row][j] -= factor * A[col][j];
         }
     }
-    for(int i=0;i<n;i++) res*=mat[i][i];
-    return res;
+    return det;
 }
 
-void solver(int n){
-    double d=det(n);
-    double aux[n];
-    //if(abs(d) <1e -12) return ;// determinante = 0
-    for(int i=0;i<n;i++){
-        for(int j=0;j<n;j++){
-            aux[j]=A[j][i];
-            A[j][i]=b[j];
-        }
-        X[i]=det(n)/d;
-        for(int j=0;j<n;j++) A[j][i]=aux[j];
+vector<double> cramer(Matrix A, vector<double> b) {
+    int n = (int)A.size();
+    double det_a = determinant(A);
+    if (fabs(det_a) < EPS) return {};
+
+    vector<double> x(n);
+    for (int col = 0; col < n; col++) {
+        Matrix cur = A;
+        for (int row = 0; row < n; row++) cur[row][col] = b[row];
+        x[col] = determinant(cur) / det_a;
     }
+    return x;
 }

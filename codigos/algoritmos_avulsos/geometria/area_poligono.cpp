@@ -1,24 +1,25 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// --- Funções para Polígonos ---
+struct Point {
+    double x, y;
+};
 
-// Typedef para facilitar a leitura (já deve estar no seu template)
-using polygon = vector<point >;
+using Polygon = vector<Point>;
 
-// Calcula a área de um polígono simples (convexo ou côncavo)
-// usando a Fórmula de Shoelace.Os vértices devem estar ordenados.
-// Complexidade : O(N)
-double area_poligono (const polygon& poly) {
-    double area_duplicada = 0.0;
-    int n = poly.size ();
+double cross(Point a, Point b) {
+    return a.x * b.y - a.y * b.x;
+}
 
-    // Um polígono precisa de pelo menos 3 vértices para ter á rea.if (n <3) return
+// Calcula a area de um poligono simples pela formula de Shoelace.
+// Os vertices devem estar em ordem horaria ou anti-horaria.
+double polygon_area(const Polygon& poly) {
+    int n = (int)poly.size();
+    if (n < 3) return 0.0;
 
-    // Itera por todos os vértices e soma os produtos vetoriais
-    // de vértices adjacentes (poly[i] e poly[i+1]).for (int i = 0; i <n; i++) {
-        area_duplicada += poly[i] % poly [(i + 1) % n];
+    double twice_area = 0.0;
+    for (int i = 0; i < n; i++) {
+        twice_area += cross(poly[i], poly[(i + 1) % n]);
     }
-
-    // O resultado é a metade do valor absoluto da soma.return fabs( area_duplicada ) / 2.0;
+    return fabs(twice_area) / 2.0;
 }

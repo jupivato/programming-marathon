@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// Cria um dicionario de prefixos
+// Cria um dicionario de prefixos.
 const int K = 26;
 struct Vertex {
     int next[K];
@@ -11,12 +11,13 @@ struct Vertex {
         fill(begin(next), end(next), -1);
     }
 };
-vector<Vertex > trie (1);
-// Adiciona o prefixo e da update no output
+vector<Vertex> trie(1);
+
+// Adiciona uma palavra ao dicionario.
 int add_string(string const& s) {
     int v = 0;
     for (char ch : s) {
-        int c = ch - ’a’;
+        int c = ch - 'a';
         if(trie[v].eliminado) return 0;
         if (trie[v].next[c] == -1) {
             trie[v].next[c] = trie.size ();
@@ -28,7 +29,7 @@ int add_string(string const& s) {
     trie[v].output ++;
     return 1;
 }
-// Conta quantos prefixos terminam dps do ponto
+// Conta quantas palavras existem abaixo do vertice v.
 int conta_out(int v){
     int res =0;
     if(trie[v].eliminado) return 0;
@@ -40,11 +41,11 @@ int conta_out(int v){
     res+= trie[v].output;
     return res;
 }
-// Apaga o prefixo e conta os eliminados
+// Remove todo o subtrie de um prefixo e devolve quantas palavras foram removidas.
 int remove_string(string const& s){
     int v = 0;
     for (char ch : s) {
-        int c = ch - ’a’;
+        int c = ch - 'a';
         if(trie[v].eliminado) return 0;
         if (trie[v].next[c] == -1) {
             trie[v].next[c] = trie.size ();
